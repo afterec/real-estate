@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AfteREC Real Estate — Apresentação do Serviço</title>
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#161618;
+    --bg-2:#1e1e21;
+    --ink:#f4f2ee;
+    --ink-dim:#b6b3ad;
+    --red:#f90000;
+    --red-soft:#ff3b30;
+    --red-dim:rgba(249,0,0,.4);
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --sans:'Inter',-apple-system,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-weight:300;
+    overflow-x:hidden;
+  }
+  main{
+    height:100vh;overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+  }
+  section.slide{
+    height:100vh;width:100%;
+    scroll-snap-align:start;scroll-snap-stop:always;
+    position:relative;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .kicker{
+    font-family:var(--sans);font-size:.72rem;font-weight:500;
+    letter-spacing:.32em;text-transform:uppercase;color:var(--red-soft);
+    margin-bottom:1.6rem;
+  }
+  h1,h2{font-family:var(--serif);font-weight:300;line-height:1.08}
+  h1{font-size:clamp(2.8rem,6.2vw,5.4rem)}
+  h2{font-size:clamp(2rem,4.2vw,3.6rem);margin-bottom:1.6rem}
+  h2 em{font-style:italic;color:var(--red-soft)}
+  p.body{
+    font-size:clamp(.95rem,1.25vw,1.12rem);line-height:1.75;
+    color:var(--ink-dim);max-width:36em;
+  }
+  p.body strong{color:var(--ink);font-weight:400}
+  .num{
+    position:absolute;top:2.4rem;left:3rem;z-index:5;
+    font-family:var(--sans);font-size:.7rem;letter-spacing:.25em;
+    color:rgba(244,242,238,.4);
+  }
+  /* ---------- botão voltar ao menu de conteúdos ---------- */
+  a.back{
+    position:absolute;top:2.2rem;right:3rem;z-index:6;
+    font-family:var(--sans);font-size:.68rem;font-weight:500;
+    letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-dim);text-decoration:none;
+    border:1px solid rgba(244,242,238,.2);border-radius:2rem;
+    padding:.55rem 1.2rem;background:rgba(22,22,24,.55);backdrop-filter:blur(4px);
+    transition:color .2s,border-color .2s;
+  }
+  a.back:hover{color:var(--red-soft);border-color:var(--red-dim)}
+  /* ---------- hero (capa + final) ---------- */
+  .hero .bgimg{position:absolute;inset:0;background-size:cover;background-position:center;}
+  .hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,22,24,.3) 0%,rgba(22,22,24,.55) 55%,rgba(22,22,24,.92) 100%)}
+  .hero .content{position:relative;z-index:2;text-align:center;padding:0 6vw}
+  .hero h1,.hero h2,.hero .sub,.hero p.body{text-shadow:0 2px 28px rgba(0,0,0,.65)}
+  .rule{width:56px;height:1px;background:var(--red);margin:2.2rem auto}
+  .hero .sub{font-family:var(--serif);font-style:italic;font-size:clamp(1.1rem,2vw,1.6rem);color:var(--ink)}
+  /* capa: alinhada à esquerda e ao topo, sobre o céu, com animação de entrada */
+  section.slide.capa{align-items:flex-start}
+  .capa .veil{background:linear-gradient(90deg,rgba(22,22,24,.78) 0%,rgba(22,22,24,.38) 42%,rgba(22,22,24,.04) 72%),linear-gradient(180deg,transparent 55%,rgba(22,22,24,.82) 100%)}
+  .capa .content{width:100%;max-width:1280px;padding:0 7vw;text-align:left;margin-top:9vh}
+  @keyframes fadeup{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  .capa .logo,.capa h1,.capa .rule,.capa .sub{opacity:0;animation:fadeup .9s ease forwards}
+  .capa .logo{animation-delay:.15s}
+  .capa h1{animation-delay:.45s}
+  .capa .rule{animation-delay:.7s}
+  .capa .sub{animation-delay:.9s}
+  .capa .logo{width:min(280px,46vw);height:auto;display:block;margin:0 0 .9rem}
+  .capa h1{
+    font-family:var(--sans);font-weight:400;
+    font-size:clamp(.95rem,1.6vw,1.35rem);
+    letter-spacing:.58em;text-transform:uppercase;color:var(--ink);
+    margin-left:.15em;
+  }
+  .capa .rule{margin:2rem 0}
+  /* ---------- split layout ---------- */
+  /* section.slide (flex) tem especificidade maior que .split; este seletor garante o grid.
+     align-items:stretch é obrigatório: o center herdado do slide colapsa o painel de media
+     (que só tem filhos absolutos) para altura zero. */
+  section.slide.split{display:grid;grid-template-columns:47% 53%;grid-template-rows:100%;align-items:stretch;justify-content:stretch;width:100%;height:100%}
+  .split .text{
+    display:flex;flex-direction:column;justify-content:center;
+    padding:0 4.5vw;background:var(--bg);
+  }
+  .split .media{position:relative;background:var(--bg-2)}
+  .split .media .bgimg{position:absolute;inset:0;background-size:cover;background-position:center}
+  .split .media .bgvideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .split .media .grad{position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 0%,transparent 18%)}
+  section.slide.split.rev{grid-template-columns:53% 47%}
+  .split.rev .media .grad{background:linear-gradient(270deg,var(--bg) 0%,transparent 18%)}
+  /* ---------- painel comparativo (slide 3), gráfico estilo referência ---------- */
+  .compare{
+    position:absolute;inset:0;background:var(--bg-2);
+    display:flex;flex-direction:column;justify-content:center;
+    padding:0 3.4vw;
+  }
+  .chart{display:grid;grid-template-columns:1fr 1.15fr;gap:2.6rem;align-items:end;width:100%}
+  .ccol{display:flex;flex-direction:column;justify-content:flex-end}
+  .cbig{font-family:var(--sans);font-weight:300;display:block;font-size:clamp(2rem,3.4vw,3.2rem);line-height:1;letter-spacing:-.01em}
+  .ccol.sem .cbig{color:var(--ink-dim)}
+  .ccol.com .cbig{color:var(--red-soft);text-shadow:0 0 34px rgba(249,0,0,.4)}
+  .csub{display:block;font-size:.75rem;color:var(--ink-dim);line-height:1.5;margin-top:.4rem;max-width:24em}
+  .csub em{font-style:normal;color:rgba(244,242,238,.45)}
+  .stem{border-left:1px dashed rgba(244,242,238,.3);margin:.7rem 0 0 5px}
+  .ccol.sem .stem{height:24px}
+  .ccol.com .stem{height:24px;border-color:var(--red-dim)}
+  .cbar{width:100%;clip-path:polygon(0 0,74% 0,100% 26%,100% 100%,0 100%)}
+  .ccol.sem .cbar{height:48px;background:linear-gradient(180deg,rgba(244,242,238,.85) 0,rgba(244,242,238,.22) 4px,rgba(244,242,238,0) 100%)}
+  .fonte{margin-top:1.6rem;font-size:.72rem;color:rgba(244,242,238,.45)}
+  .ccol.com .cbar{height:236px;background:linear-gradient(180deg,#f90000 0,rgba(249,0,0,.45) 5px,rgba(249,0,0,0) 100%);filter:drop-shadow(0 -6px 30px rgba(249,0,0,.3))}
+  .ccol ul{list-style:none;margin-top:1.2rem;display:flex;flex-direction:column;gap:.45rem}
+  .ccol li{font-size:.78rem;line-height:1.5;color:var(--ink-dim);padding-left:.9rem;position:relative}
+  .ccol li:before{content:'·';position:absolute;left:0;color:var(--red-soft)}
+  .ccol.sem li:before{color:var(--ink-dim)}
+  /* ---------- full-bleed statement ---------- */
+  .statement{background:var(--bg)}
+  .statement .content{max-width:1040px;padding:0 2rem;text-align:center}
+  .statement p.body{margin:0 auto}
+  .oneline{white-space:nowrap}
+  @media(max-width:900px){.oneline{white-space:normal}}
+  /* ---------- menu slide ---------- */
+  .menu-wrap{max-width:1080px;width:100%;padding:0 6vw}
+  .menu-cols{display:grid;grid-template-columns:1fr 1fr;gap:4rem;margin-top:2.5rem}
+  .menu-col h3{
+    font-family:var(--sans);font-size:.72rem;font-weight:600;
+    letter-spacing:.3em;text-transform:uppercase;color:var(--red-soft);
+    margin-bottom:1.4rem;
+  }
+  .menu-col ul{list-style:none}
+  .menu-col li{border-bottom:1px solid rgba(244,242,238,.09)}
+  .menu-col li a{
+    font-family:var(--sans);font-weight:400;
+    font-size:clamp(.92rem,1.15vw,1.06rem);letter-spacing:.02em;
+    padding:.75rem 0;color:var(--ink);text-decoration:none;
+    display:flex;justify-content:space-between;align-items:baseline;
+    transition:color .2s,padding-left .2s;
+  }
+  .menu-col li a:after{
+    content:'→';font-size:.85rem;color:var(--red-dim);
+    opacity:0;transition:opacity .2s;
+  }
+  .menu-col li a:hover{color:var(--red-soft);padding-left:.4rem}
+  .menu-col li a:hover:after{opacity:1}
+  .menu-note{margin-top:2.6rem;color:var(--ink-dim);font-size:clamp(.9rem,1.1vw,1rem);line-height:1.7}
+  .menu-note a{color:var(--red-soft);text-decoration:none;border-bottom:1px solid var(--red-dim)}
+  /* ---------- photo grid slide ---------- */
+  .gridslide{flex-direction:column;background:var(--bg)}
+  .gridslide .head{width:100%;max-width:1200px;padding:0 6vw;margin-bottom:2rem}
+  .photogrid{
+    display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px;
+    width:100%;max-width:1200px;padding:0 6vw;height:52vh;
+  }
+  .photogrid .ph{background-size:cover;background-position:center;background-color:var(--bg-2)}
+  .photogrid .ph:first-child{grid-row:span 2}
+  .photogrid .ph:nth-child(4){grid-column:span 2}
+  /* ---------- grelha redes sociais (FPV vertical largo + foto aérea + 2 time-lapses) ---------- */
+  .media4{position:absolute;inset:0;display:grid;grid-template-columns:.85fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:10px}
+  .media4 .m{background-size:cover;background-position:center;background-color:var(--bg-2);position:relative;overflow:hidden}
+  .media4 .m.big{grid-row:span 3}
+  .media4 .m .bgvideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  /* ---------- grelha 3D (vídeo + 2 renders) ---------- */
+  .media3{position:absolute;inset:0;display:grid;grid-template-columns:1.35fr 1fr;grid-template-rows:1fr 1fr;gap:10px}
+  .media3 .m{background-size:cover;background-position:center;background-color:var(--bg-2);position:relative;overflow:hidden}
+  .media3 .m.big{grid-row:span 2}
+  .media3 .m .bgvideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  /* ---------- portátil com página em scroll + tour 360 (slide website) ---------- */
+  .web-stack{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg-2);padding:2rem 3vw}
+  .t360{width:min(72%,520px);height:32%;background-size:cover;background-position:center;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .laptop{width:min(72%,520px)}
+  .laptop .screen{aspect-ratio:16/10;overflow:hidden;border:10px solid #08080a;border-radius:12px 12px 0 0;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+  .laptop .screen .page{display:block;width:100%;will-change:transform;animation:pagescroll 26s ease-in-out infinite alternate}
+  @keyframes pagescroll{0%,6%{transform:translate3d(0,0,0)}94%,100%{transform:translate3d(0,-64%,0)}}
+  .laptop .base{height:15px;width:114%;margin-left:-7%;background:linear-gradient(180deg,#232326,#0a0a0c);border-radius:2px 2px 14px 14px}
+  /* ---------- dual media (drone + reel) ---------- */
+  .dual .media2{display:grid;grid-template-columns:1fr .62fr;gap:10px;position:absolute;inset:0;padding:0}
+  .dual .m{background-size:cover;background-position:center;background-color:var(--bg-2);position:relative;overflow:hidden}
+  .dual .m .bgvideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  /* ---------- process ---------- */
+  .process .content{max-width:1080px;width:100%;padding:0 6vw}
+  .timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:3rem 0 2.4rem;position:relative}
+  .timeline:before{content:'';position:absolute;top:7px;left:2%;right:2%;height:1px;background:var(--red-dim)}
+  .step{position:relative;padding:2rem 1.2rem 0 0}
+  .step:before{content:'';position:absolute;top:0;left:0;width:15px;height:15px;border-radius:50%;border:1px solid var(--red-soft);background:var(--bg)}
+  .step h4{font-family:var(--serif);font-weight:400;font-size:1.35rem;margin-bottom:.5rem}
+  .step p{font-size:.8rem;line-height:1.6;color:var(--ink-dim)}
+  .badge{
+    display:inline-block;border:1px solid var(--red-dim);border-radius:1.4rem;
+    padding:.6rem 1.6rem;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red-soft);
+    text-align:center;line-height:1.5;
+  }
+  .badge small{display:block;font-size:.6rem;letter-spacing:.16em;color:var(--ink-dim)}
+  /* ---------- pacotes ---------- */
+  .pacotes .content{max-width:1180px;width:100%;padding:0 5vw}
+  .pk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:2.6rem}
+  .pk{
+    border:1px solid rgba(244,242,238,.13);border-radius:4px;
+    padding:1.8rem 1.5rem;display:flex;flex-direction:column;gap:1rem;
+    background:var(--bg-2);position:relative;
+  }
+  .pk.destaque{border-color:var(--red-dim)}
+  .pk .tag{
+    position:absolute;top:-.7rem;right:1rem;
+    background:var(--red);color:#fff;border-radius:2rem;
+    font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    padding:.3rem .8rem;
+  }
+  .pk li strong{color:var(--ink);font-weight:500}
+  .pk h4{font-family:var(--serif);font-weight:400;font-size:1.55rem}
+  .pk .preco{font-family:var(--sans);font-size:.92rem;font-weight:500;color:var(--red-soft);letter-spacing:.04em}
+  .pk ul{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+  .pk li{font-size:.82rem;line-height:1.5;color:var(--ink-dim);padding-left:1rem;position:relative}
+  .pk li:before{content:'·';position:absolute;left:0;color:var(--red-soft)}
+  .pk .quem{margin-top:auto;font-size:.72rem;letter-spacing:.06em;color:rgba(244,242,238,.45);font-style:italic}
+  .pk-note{margin-top:2.2rem;font-size:.85rem;line-height:1.7;color:var(--ink-dim);max-width:52em}
+  .pk-note a{color:var(--red-soft);text-decoration:none;border-bottom:1px solid var(--red-dim)}
+  /* ---------- ramify (slide 4) ---------- */
+  .ramify{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2.4rem}
+  .chip{
+    border:1px solid rgba(244,242,238,.16);border-radius:2rem;
+    padding:.5rem 1.2rem;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);
+  }
+  /* ---------- CTA final ---------- */
+  .cta .veil{background:linear-gradient(180deg,rgba(22,22,24,.55) 0%,rgba(22,22,24,.75) 50%,rgba(22,22,24,.94) 100%)}
+  .cta .content{position:relative;z-index:2;text-align:center;padding:0 6vw;max-width:860px}
+  .btn{
+    display:inline-block;margin-top:2.6rem;
+    background:var(--red);color:#fff;text-decoration:none;
+    font-family:var(--sans);font-weight:500;font-size:.8rem;
+    letter-spacing:.22em;text-transform:uppercase;
+    padding:1.1rem 2.8rem;border-radius:2px;
+    transition:opacity .25s;
+  }
+  .btn:hover{opacity:.85}
+  .contacts{margin-top:2.8rem;font-size:.85rem;letter-spacing:.06em;color:var(--ink-dim);line-height:2}
+  .contacts a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--red-dim)}
+  /* ---------- seta de continuar ---------- */
+  a.downarrow{
+    position:fixed;bottom:1.6rem;left:50%;transform:translateX(-50%);
+    z-index:60;width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+    color:var(--ink);opacity:.85;transition:opacity .3s,color .2s;
+    animation:arrowfloat 2.2s ease-in-out infinite;
+  }
+  a.downarrow:hover{color:var(--red-soft)}
+  a.downarrow.hidden{opacity:0;pointer-events:none}
+  a.downarrow svg{width:26px;height:26px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))}
+  @keyframes arrowfloat{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+  /* ---------- dots nav ---------- */
+  nav.dots{
+    position:fixed;right:1.4rem;top:50%;transform:translateY(-50%);
+    z-index:50;display:flex;flex-direction:column;gap:.7rem;
+  }
+  nav.dots a{width:7px;height:7px;border-radius:50%;background:rgba(244,242,238,.25);transition:.2s}
+  nav.dots a.active{background:var(--red);transform:scale(1.35)}
+  /* ---------- responsive (telemóvel: página fluida, sem slides fixos) ---------- */
+  @media(max-width:860px){
+    main{height:auto;overflow-y:visible;scroll-snap-type:none}
+    section.slide{height:auto;min-height:0;scroll-snap-align:none;scroll-snap-stop:normal;padding:4.5rem 0 3.5rem}
+    section.slide.hero{height:100vh;height:100svh;min-height:540px;padding:0}
+    /* split: coluna única, media primeiro com altura própria */
+    section.slide.split,section.slide.split.rev{display:flex;flex-direction:column;height:auto}
+    .split .text{padding:2.2rem 7vw 0}
+    .split .media{order:-1;width:100%;height:44vh;min-height:280px}
+    .split .media .grad,.split.rev .media .grad{background:linear-gradient(0deg,var(--bg) 0%,transparent 22%)}
+    /* painéis que se dimensionam ao conteúdo */
+    #s3 .media{height:auto;min-height:0}
+    .compare{position:relative;inset:auto;padding:2.5rem 7vw 0}
+    #s10 .media{height:auto;min-height:0}
+    .web-stack{position:relative;inset:auto;padding:2.5rem 7vw 0}
+    .t360{width:min(88%,520px);height:200px}
+    .laptop{width:min(88%,520px)}
+    .menu-wrap,.statement .content,.process .content,.pacotes .content{padding:0 7vw}
+    .menu-cols{grid-template-columns:1fr;gap:2rem}
+    .timeline{grid-template-columns:1fr;gap:1rem}
+    /* linha vertical a ligar as bolinhas no telemóvel */
+    .timeline:before{left:7px;right:auto;top:10px;bottom:24px;width:1px;height:auto}
+    .step{padding:0 0 0 2rem}
+    .step:before{top:2px}
+    .num{left:1.4rem;top:1.6rem}
+    a.back{right:1.4rem;top:1.4rem}
+    nav.dots{display:none}
+    .gridslide .head{padding:0 7vw}
+    .photogrid{grid-template-columns:1fr 1fr;height:auto;grid-auto-rows:34vw;padding:0 7vw}
+    .photogrid .ph:first-child{grid-row:auto}
+    .photogrid .ph:nth-child(4){grid-column:auto}
+    .pk-grid{grid-template-columns:1fr}
+    .chart{gap:1.6rem}
+    .capa .content{margin-top:14vh}
+    /* subtítulo da capa em 2 linhas para não tapar a casa */
+    .capa .sub .subq{display:block}
+  }
+</style>
+</head>
+<body>
+<main id="deck">
+
+  <!-- 01 · CAPA -->
+  <section class="slide hero capa" id="s1">
+    <div class="bgimg" style="background-image:url('img/01-capa.jpg')"></div>
+    <div class="veil"></div>
+    <div class="content">
+      <img class="logo" src="img/00-logo-branco.png" alt="AfteREC">
+      <h1>Real Estate</h1>
+      <div class="rule"></div>
+      <p class="sub">Um serviço de produção audiovisual <span class="subq">para imobiliário de luxo.</span></p>
+    </div>
+  </section>
+
+  <!-- 02 · O QUE É A AFTEREC -->
+  <section class="slide statement" id="s2">
+    <div class="num">02 · A AFTEREC</div>
+    <div class="content">
+      <div class="kicker">Quem somos</div>
+      <h2>Não fazemos «um vídeo».<br><span class="oneline">Construímos a <em>imagem</em> de um imóvel.</span></h2>
+      <p class="body">A AfteREC é uma <strong>produtora de cinema</strong>. Produzimos conteúdos que <strong>prendem a atenção do espectador</strong>: através da narrativa, da escolha de planos, da iluminação e da decoração. Para cada imóvel, mostramos o melhor que a casa tem, a sua unicidade, numa peça visual que faz querer conhecer mais. Procuramos trabalhar com <strong>imóveis únicos e exclusivos</strong>, principalmente no setor de luxo, e estes conteúdos <strong>reforçam a marca pessoal do agente e da empresa</strong> associada à venda do imóvel.<br><br>Coordenamos os melhores profissionais para cada conteúdo e garantimos que tudo o que produzimos mantém um nível de qualidade elevado. O que pode esperar não é apenas a entrega de um material: é a <strong>gestão de todos os conteúdos de marketing de um imóvel</strong>, de um empreendimento ou de um projeto, especialmente em conteúdos cinematográficos e muito cuidados.</p>
+    </div>
+  </section>
+
+  <!-- 03 · PORQUE IMPORTA -->
+  <section class="slide split rev" id="s3">
+    <div class="num">03 · O MERCADO</div>
+    <div class="media">
+      <div class="compare">
+        <div class="chart">
+          <div class="ccol sem">
+            <span class="cbig">10</span>
+            <span class="csub">contactos num anúncio <strong>sem vídeo</strong></span>
+            <div class="stem"></div>
+            <div class="cbar"></div>
+            <ul>
+              <li>O anúncio é igual a todos os outros</li>
+              <li>Visitas cheias de curiosos</li>
+              <li>Mais tempo no mercado</li>
+            </ul>
+          </div>
+          <div class="ccol com">
+            <span class="cbig">+40</span>
+            <span class="csub">contactos num anúncio <strong>com vídeo</strong> (4× mais)</span>
+            <div class="stem"></div>
+            <div class="cbar"></div>
+            <ul>
+              <li>O imóvel destaca-se e justifica o preço</li>
+              <li>Compradores chegam qualificados à visita</li>
+              <li>Menos tempo no mercado</li>
+            </ul>
+          </div>
+        </div>
+        <p class="fonte">Fonte: National Association of Realtors (anúncios com vídeo recebem +403% de contactos).</p>
+      </div>
+    </div>
+    <div class="text">
+      <div class="kicker">Porque é que isto importa</div>
+      <h2>No luxo, o problema não é divulgar. É <em>sustentar o valor</em>.</h2>
+      <p class="body">Hoje qualquer pessoa faz um vídeo, mas poucos criam conteúdo com <strong>linguagem de cinema que ao mesmo tempo funciona online</strong>. É isso que muda o posicionamento do imóvel e de quem o comercializa: acelera a venda, reduz curiosos, melhora a qualidade das leads e faz o comprador chegar à visita já a entender a casa. E nós garantimos que tudo isto acontece.<br><br>Quanto melhor e mais apelativo é o conteúdo, mais contactos gera e <strong>menos tempo o imóvel fica no mercado</strong>. E menos tempo no mercado significa menos custos: manter um imóvel de luxo pode custar 5 a 10 mil euros por mês, entre jardins, eletricidade, água e o essencial para o manter impecável. Vender mais depressa é passar esses custos ao comprador mais cedo.</p>
+    </div>
+  </section>
+
+  <!-- 04 · DOIS RETORNOS -->
+  <section class="slide statement" id="s4">
+    <div class="num">04 · O RETORNO</div>
+    <div class="content">
+      <div class="kicker">Um investimento, dois retornos</div>
+      <h2>Tudo o que produzimos serve <em>dois propósitos</em>.</h2>
+      <p class="body">Cada peça <strong>vende o imóvel</strong> e, ao mesmo tempo, <strong>divulga quem o comercializa</strong>: o promotor, o escritório de arquitetura, a agência, o agente imobiliário. Melhora o showreel, as redes sociais e os materiais de promoção de quem o apresenta. E o conteúdo não deixa de ser útil quando o imóvel se vende: fica a trabalhar para a divulgação e o marketing de quem o contratou.</p>
+      <div class="ramify" style="justify-content:center">
+        <span class="chip">Portais</span>
+        <span class="chip">Redes sociais</span>
+        <span class="chip">Website</span>
+        <span class="chip">Materiais de promoção</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · O SISTEMA DE CONTEÚDOS -->
+  <section class="slide" id="s5">
+    <div class="num">05 · O SISTEMA</div>
+    <div class="menu-wrap">
+      <div class="kicker">O sistema de conteúdos</div>
+      <h2>Tudo o que um imóvel pode precisar, <em>num só sítio</em>.</h2>
+      <div class="menu-cols">
+        <div class="menu-col">
+          <h3>Essencial</h3>
+          <ul>
+            <li><a href="#s6">Fotografia de arquitetura</a></li>
+            <li><a href="#s7">Vídeo cinematográfico</a></li>
+            <li><a href="#s8">Captação aérea (drone FPV)</a></li>
+            <li><a href="#s8">Conteúdos para redes sociais</a></li>
+          </ul>
+        </div>
+        <div class="menu-col">
+          <h3>Para ir mais longe</h3>
+          <ul>
+            <li><a href="#s8">Time-lapse de obras</a></li>
+            <li><a href="#s9">Renders e 3D</a></li>
+            <li><a href="#s10">Website dedicado ao imóvel</a></li>
+            <li><a href="#s10">Tour com fotografia 360º</a></li>
+            <li><a href="#s7b">Vídeo-tour guiado</a></li>
+            <li><a href="#s11">Livro / catálogo impresso</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="menu-note">Escolhemos consigo o que faz sentido para cada imóvel. Nada é imposto. Clique em cada conteúdo para o conhecer, ou <a href="#s13">veja os pacotes de conteúdos →</a></p>
+    </div>
+  </section>
+
+  <!-- 06 · FOTOGRAFIA -->
+  <section class="slide gridslide" id="s6">
+    <div class="num">06 · FOTOGRAFIA</div>
+    <a class="back" href="#s5">← Todos os conteúdos</a>
+    <div class="head">
+      <div class="kicker">Fotografia de arquitetura</div>
+      <h2 style="margin-bottom:.8rem">Construímos cada <em>plano</em>.</h2>
+      <p class="body">De 15 a mais de 35 imagens captadas e editadas por <strong>fotógrafos especializados em arquitetura</strong>. Atenção à luz, à composição e à leitura dos materiais, para transmitir a arquitetura, o desenho do espaço e a presença da casa no lugar, em portais, redes e todos os outros materiais do imóvel.</p>
+    </div>
+    <div class="photogrid">
+      <div class="ph" style="background-image:url('img/06-foto-a.jpg')"></div>
+      <div class="ph" style="background-image:url('img/06-foto-b.jpg')"></div>
+      <div class="ph" style="background-image:url('img/06-foto-c.jpg')"></div>
+      <div class="ph" style="background-image:url('img/06-foto-d.jpg')"></div>
+    </div>
+  </section>
+
+  <!-- 07 · VÍDEO CINEMATOGRÁFICO -->
+  <section class="slide split" id="s7">
+    <div class="num">07 · VÍDEO</div>
+    <a class="back" href="#s5">← Todos os conteúdos</a>
+    <div class="text">
+      <div class="kicker">Vídeo cinematográfico</div>
+      <h2>Não é um anúncio. É um <em>filme</em>.</h2>
+      <p class="body">Um vídeo mais longo, produzido com as exigências de cinema: equipa com direção de fotografia, iluminação e direção de arte, e pós-produção com correção de cor. O <strong>guião é a peça fundamental</strong>: é a narrativa que prende quem vê, e pode ser séria, cómica ou transmitir um estilo de vida em que o comprador se revê e que o faz querer a casa. É a peça que cria emoção e apresenta o imóvel como um produto premium e único.<br><br>Ideal para imóveis e projetos verdadeiramente únicos, que merecem chegar a um público universal e atraí-lo à primeira vista. E diz muito sobre quem o encomenda: uma agência ou marca que apresenta um vídeo destes mostra que se preocupa com a estética e com a narrativa, e divulga o seu portfólio ao mais alto nível.</p>
+    </div>
+    <div class="media" style="background-image:url('img/07-cinema.jpg');background-size:cover;background-position:center">
+      <!-- Vídeo em loop, sem ligação externa: colocar o ficheiro em video/07-cinema.mp4 -->
+      <video class="bgvideo" autoplay muted loop playsinline poster="img/07-cinema.jpg">
+        <source src="video/07-cinema.mp4" type="video/mp4">
+      </video>
+      <div class="grad"></div>
+    </div>
+  </section>
+
+  <!-- 08 · VÍDEO-TOUR GUIADO -->
+  <section class="slide split rev" id="s7b">
+    <div class="num">08 · VÍDEO-TOUR</div>
+    <a class="back" href="#s5">← Todos os conteúdos</a>
+    <div class="media" style="background-image:url('img/07b-tour.jpg');background-size:cover;background-position:center">
+      <!-- Vídeo-tour em loop, sem som nem ligação externa -->
+      <video class="bgvideo" autoplay muted loop playsinline poster="img/07b-tour.jpg">
+        <source src="video/07b-tour.mp4" type="video/mp4">
+      </video>
+      <div class="grad"></div>
+    </div>
+    <div class="text">
+      <div class="kicker">Vídeo-tour guiado</div>
+      <h2>Para quem quer conhecer o imóvel <em>a fundo</em>.</h2>
+      <p class="body">Um formato longo, que pode chegar aos 30 minutos consoante o tamanho do imóvel, dedicado ao <strong>YouTube</strong>. Percorre a casa divisão a divisão e conta a sua história a quem realmente quer conhecer o imóvel antes de decidir um investimento desta dimensão.<br><br>É um vídeo pensado para <strong>alcance orgânico</strong>: em média, um vídeo destes ronda o meio milhão de visualizações, e imóveis verdadeiramente excecionais chegam às dezenas de milhões de visualizações, consoante a exclusividade do imóvel.<br><br>O formato tem sido fortemente explorado nos <strong>Estados Unidos nos últimos cinco anos</strong>, com resultados à vista nas visualizações e nas vendas fechadas através destes conteúdos. Em Portugal quase nenhuma empresa o faz, e é também por isso que nos destacamos ao trazê-lo.</p>
+    </div>
+  </section>
+
+  <!-- 09 · CONTEÚDOS PARA REDES SOCIAIS -->
+  <section class="slide split" id="s8">
+    <div class="num">09 · REDES SOCIAIS</div>
+    <a class="back" href="#s5">← Todos os conteúdos</a>
+    <div class="text">
+      <div class="kicker">Conteúdos para redes sociais</div>
+      <h2>Do ar, e <em>ao longo do tempo</em>.</h2>
+      <p class="body">Vídeos curtos com edições dinâmicas e com movimento, e fotografias do imóvel, feitos para prender e gerar mais alcance. A <strong>captação aérea com drone FPV</strong> percorre todas as divisões numa trajetória contínua e cinematográfica, mostra a relação da casa com o terreno e a envolvente, e revela todo o potencial do imóvel da forma mais rápida, exatamente o que o espectador das redes procura: perceber a casa em segundos e ficar preso ao vídeo desde o primeiro momento.<br><br>Para imóveis em construção, um <strong>time-lapse mensal</strong> documenta a obra do primeiro dia à entrega: ideal para empreendimentos e promotoras. E quando o projeto o justifica, criamos conteúdos com <strong>inteligência artificial</strong>, que também usamos na edição de alguns conteúdos para redes.</p>
+    </div>
+    <div class="media">
+      <div class="media4">
+        <div class="m big" style="background-image:url('img/08-reel.jpg')">
+          <!-- Vídeo FPV em loop, sem som nem ligação externa -->
+          <video class="bgvideo" autoplay muted loop playsinline poster="img/08-reel.jpg">
+            <source src="video/08-fpv.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="m" style="background-image:url('img/08-drone.jpg')"></div>
+        <div class="m" style="background-image:url('img/08-tl-real.jpg')">
+          <!-- Time-lapse de obra real (The Park Residence) -->
+          <video class="bgvideo" autoplay muted loop playsinline poster="img/08-tl-real.jpg">
+            <source src="video/08-tl-real.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="m" style="background-image:url('img/08-tl-ia.jpg')">
+          <!-- Time-lapse de obra melhorado com IA (The Park Residence) -->
+          <video class="bgvideo" autoplay muted loop playsinline poster="img/08-tl-ia.jpg">
+            <source src="video/08-tl-ia.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div class="grad"></div>
+    </div>
+  </section>
+
+  <!-- 09 · RENDERS E 3D -->
+  <section class="slide split" id="s9">
+    <div class="num">10 · 3D</div>
+    <a class="back" href="#s5">← Todos os conteúdos</a>
+    <div class="text">
+      <div class="kicker">Renders e conteúdo 3D</div>
+      <h2>O imóvel, <em>antes de existir</em>.</h2>
+      <p class="body">Renders e vídeo 3D para imóveis que ainda não existem: terrenos com projeto aprovado, empreendimentos em planta ou obras por terminar. Mostram todo o potencial do espaço com qualidade próxima do resultado final e permitem vender em pré-venda, muito antes de a obra estar pronta.<br><br>Excelente para promotores, agentes e proprietários de terrenos que precisam de comunicar o que ainda só existe no papel.</p>
+    </div>
+    <div class="media">
+      <div class="media3">
+        <div class="m big">
+          <!-- Vídeo 3D em loop, sem som nem ligação externa -->
+          <video class="bgvideo" autoplay muted loop playsinline poster="img/09-3d.jpg">
+            <source src="video/09-3d.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="m" style="background-image:url('img/09-render.jpg')"></div>
+        <div class="m" style="background-image:url('img/09-render-b.jpg')"></div>
+      </div>
+      <div class="grad"></div>
+    </div>
+  </section>
+
+  <!-- 10 · WEBSITE + TOUR 360 -->
+  <section class="slide split rev" id="s10">
+    <div class="num">11 · DIGITAL</div>
+    <a class="back" href="#s5">← Todos os conteúdos</a>
+    <div class="media">
+      <div class="web-stack">
+        <div class="laptop">
+          <div class="screen"><img class="page" src="img/10-website-page.jpg" alt="Website dedicado a um imóvel"></div>
+          <div class="base"></div>
+        </div>
+        <div class="t360" style="background-image:url('img/10-tour360.jpg')"></div>
+      </div>
+      <div class="grad"></div>
+    </div>
+    <div class="text">
+      <div class="kicker">Website dedicado e tour com fotografia 360º</div>
+      <h2>Um link que <em>centraliza tudo</em>.</h2>
+      <p class="body">O website dedicado é a peça que centraliza a comunicação do imóvel: as fotografias, o vídeo cinematográfico, o vídeo-tour e o tour com fotografia 360º, num só endereço e com controlo sobre quem chega.<br><br>O <strong>tour com fotografia 360º</strong> é um conteúdo próprio: fotografias 360º de cada divisão criam uma casa virtual que o comprador percorre à distância, divisão a divisão, em qualquer dispositivo. Ajuda a filtrar as visitas: quem faz o tour já percebeu como o imóvel é, e quem agenda visita depois disso é porque ficou realmente interessado e quer conhecê-lo ao vivo.</p>
+    </div>
+  </section>
+
+  <!-- 11 · LIVRO / CATÁLOGO -->
+  <section class="slide split" id="s11">
+    <div class="num">12 · IMPRESSO</div>
+    <a class="back" href="#s5">← Todos os conteúdos</a>
+    <div class="text">
+      <div class="kicker">Livro / catálogo impresso</div>
+      <h2>Uma peça que <em>fica</em>.</h2>
+      <p class="body">Um livro ou catálogo em capa dura, com a fotografia e o texto escolhidos do imóvel. Ideal para casas únicas e projetos de arquitetura com história para contar: mostra o que foi pensado e como foi construído.<br><br>Entrega-se em visitas qualificadas, oferece-se ao cliente no fecho, e fica: uma peça esteticamente bonita que funciona como objeto de decoração, não desaparece como um link.</p>
+    </div>
+    <div class="media">
+      <div class="bgimg" style="background-image:url('img/11-livro.jpg')"></div>
+      <div class="grad"></div>
+    </div>
+  </section>
+
+  <!-- 12 · PROCESSO -->
+  <section class="slide process" id="s12">
+    <div class="num">13 · PROCESSO</div>
+    <div class="content">
+      <div class="kicker">Como trabalhamos</div>
+      <h2>Um processo, uma equipa especializada, <em>um prazo</em>.</h2>
+      <div class="timeline">
+        <div class="step"><h4>Briefing</h4><p>O imóvel, os pontos a destacar, os canais de destino.</p></div>
+        <div class="step"><h4>Pré-produção</h4><p>Guião, equipa, equipamento, licenças, calendário.</p></div>
+        <div class="step"><h4>Captação</h4><p>Um dia no imóvel. Preview enviado nesse mesmo dia.</p></div>
+        <div class="step"><h4>Pós-produção</h4><p>Edição, color grading, música licenciada, revisões.</p></div>
+        <div class="step"><h4>Entrega</h4><p>Todos os formatos, por canal, com instruções de uso.</p></div>
+      </div>
+      <span class="badge">O ciclo de 10 a 12 dias<small>desde o arranque da pré-produção</small></span>
+      <p class="body" style="margin-top:2rem">O ciclo de produção <strong>dura 10 a 12 dias</strong>, contados a partir do momento em que a pré-produção arranca, com a proposta aceite e adjudicada e o calendário fechado. A primeira reunião serve para percebermos o que o imóvel vai precisar; logo a seguir fazemos o alinhamento, com uma ou mais <strong>reuniões de briefing</strong> para garantir que o material vai ser feito exatamente como é necessário, dentro de um calendário provisório que apresentamos. É nesse alinhamento que se escolhem os conteúdos a gravar e os profissionais para cada peça. Basta falar diretamente connosco e nós tratamos do que é necessário.</p>
+    </div>
+  </section>
+
+  <!-- 13 · PACOTES -->
+  <section class="slide pacotes" id="s13">
+    <div class="num">14 · PACOTES</div>
+    <div class="content">
+      <div class="kicker">Pacotes de conteúdos</div>
+      <h2>Quatro pontos de partida, <em>um pacote à medida</em>.</h2>
+      <div class="pk-grid">
+        <div class="pk">
+          <h4>Essential</h4>
+          <div class="preco">€1.200 – €2.100</div>
+          <ul>
+            <li>1 vídeo para redes sociais</li>
+            <li>ou vídeo para redes sociais + fotografia de arquitetura</li>
+          </ul>
+          <div class="quem">O pacote essencial</div>
+        </div>
+        <div class="pk">
+          <h4>Standard</h4>
+          <div class="preco">€2.300 – €4.500</div>
+          <ul>
+            <li>Vídeo editorial (30–45 s)</li>
+            <li>Fotografia de arquitetura</li>
+            <li>Captação aérea (drone FPV)</li>
+            <li>1 vídeo para redes sociais</li>
+          </ul>
+          <div class="quem">Para projetos recorrentes e imóveis de luxo</div>
+        </div>
+        <div class="pk destaque">
+          <span class="tag">Best seller</span>
+          <h4>Signature</h4>
+          <div class="preco">€5.500 – €8.000</div>
+          <ul>
+            <li>Vídeo cinematográfico (1–2 min)</li>
+            <li>Fotografia de arquitetura</li>
+            <li>Captação aérea (drone FPV)</li>
+            <li>1 vídeo para redes sociais</li>
+          </ul>
+          <div class="quem">Para imóveis de luxo</div>
+        </div>
+        <div class="pk">
+          <h4>Showcase</h4>
+          <div class="preco">€9.000 – €13.500+</div>
+          <ul>
+            <li>Tudo do Signature</li>
+            <li>Website dedicado ao imóvel</li>
+            <li>Gestão de leads integrada</li>
+          </ul>
+          <div class="quem">Para empreendimentos e imóveis únicos</div>
+        </div>
+      </div>
+      <p class="pk-note">Valores sem IVA. Cada pacote ajusta-se ao imóvel: componentes podem entrar ou sair, e é isso que faz o valor variar dentro de cada pacote. O valor final é indicado na proposta enviada após a primeira reunião de descoberta. <a href="https://cal.com/afterec/discoverycall" target="_blank" rel="noopener">Marcar reunião de descoberta →</a></p>
+    </div>
+  </section>
+
+  <!-- 15 · CTA -->
+  <section class="slide statement cta" id="s14">
+    <div class="content">
+      <h2>Cada imóvel merece a sua própria <em>apresentação</em>.</h2>
+      <p class="body" style="margin:0 auto">Escolhemos consigo o que o seu imóvel precisa. Numa breve reunião, percebemos o que pretende comunicar e sugerimos as soluções mais adequadas para atingir esses objetivos.</p>
+      <a class="btn" href="https://cal.com/afterec/discoverycall" target="_blank" rel="noopener">Marcar reunião</a>
+      <div class="contacts">
+        <a href="mailto:before@afterec.com">before@afterec.com</a><br>
+        +351 939 842 928
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="dots" id="dots"></nav>
+
+<a class="downarrow" id="downarrow" href="#s2" title="Continuar">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+</a>
+
+<script>
+  const slides=[...document.querySelectorAll('section.slide')];
+  const dots=document.getElementById('dots');
+  slides.forEach((s,i)=>{
+    const a=document.createElement('a');
+    a.href='#'+s.id;a.title='Slide '+(i+1);
+    dots.appendChild(a);
+  });
+  const links=[...dots.children];
+  const arrow=document.getElementById('downarrow');
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        const i=slides.indexOf(e.target);
+        links.forEach(l=>l.classList.remove('active'));
+        links[i].classList.add('active');
+        if(i>=slides.length-1){arrow.classList.add('hidden')}
+        else{arrow.classList.remove('hidden');arrow.href='#'+slides[i+1].id}
+      }
+    });
+  },{threshold:.55});
+  slides.forEach(s=>obs.observe(s));
+  // animação da página no portátil via rAF (o CSS puro falha intermitentemente no Safari iOS)
+  const pg=document.querySelector('.laptop .screen .page');
+  if(pg){
+    pg.style.animation='none';
+    const DUR=26000;
+    const t0=performance.now();
+    (function tick(now){
+      const ph=((now-t0)%DUR)/DUR;
+      let tri=ph<.5?ph*2:2-ph*2;               // vai e volta 0→1→0
+      tri=tri<.06?0:tri>.94?1:(tri-.06)/.88;   // pausa nas pontas
+      const s=tri*tri*(3-2*tri);               // suavização
+      pg.style.transform='translate3d(0,'+(-64*s).toFixed(3)+'%,0)';
+      requestAnimationFrame(tick);
+    })(t0);
+  }
+  // navegação por teclado
+  document.addEventListener('keydown',e=>{
+    const cur=slides.findIndex(s=>{const r=s.getBoundingClientRect();return r.top>=-10&&r.top<10});
+    if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slides[Math.min(cur+1,slides.length-1)]?.scrollIntoView()}
+    if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slides[Math.max(cur-1,0)]?.scrollIntoView()}
+  });
+</script>
+</body>
+</html>
