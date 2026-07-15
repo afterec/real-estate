@@ -184,6 +184,8 @@
   .media3 .m{background-size:cover;background-position:center;background-color:var(--bg-2);position:relative;overflow:hidden}
   .media3 .m.big{grid-row:span 2}
   .media3 .m .bgvideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .media3 .m .fl{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
+  .media3 .m .fl.on{opacity:1}
   /* ---------- portátil com página em scroll + tour 360 (slide website) ---------- */
   .web-stack{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg-2);padding:2rem 3vw}
   .t360{width:min(72%,520px);height:32%;background-size:cover;background-position:center;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
@@ -528,8 +530,15 @@
             <source src="video/09-3d.mp4" type="video/mp4">
           </video>
         </div>
-        <div class="m" style="background-image:url('img/09-render.jpg')"></div>
-        <div class="m" style="background-image:url('img/09-render-b.jpg')"></div>
+        <div class="m fadeset">
+          <div class="fl on" style="background-image:url('img/09-render.jpg')"></div>
+          <div class="fl" style="background-image:url('img/09-render-c.jpg')"></div>
+          <div class="fl" style="background-image:url('img/09-render-e.jpg')"></div>
+        </div>
+        <div class="m fadeset">
+          <div class="fl on" style="background-image:url('img/09-render-b.jpg')"></div>
+          <div class="fl" style="background-image:url('img/09-render-d.jpg')"></div>
+        </div>
       </div>
       <div class="grad"></div>
     </div>
@@ -701,6 +710,17 @@
       requestAnimationFrame(tick);
     })(t0);
   }
+  // slideshow com crossfade nas células de renders 3D (4 s por imagem, células desfasadas)
+  document.querySelectorAll('.fadeset').forEach((set,idx)=>{
+    const ls=[...set.querySelectorAll('.fl')];
+    if(ls.length<2)return;
+    let i=0,z=1;
+    setTimeout(()=>{setInterval(()=>{
+      const prev=ls[i];i=(i+1)%ls.length;const next=ls[i];
+      next.style.zIndex=++z;next.classList.add('on');
+      setTimeout(()=>prev.classList.remove('on'),1300);
+    },4000)},idx*2000);
+  });
   // navegação por teclado
   document.addEventListener('keydown',e=>{
     const cur=slides.findIndex(s=>{const r=s.getBoundingClientRect();return r.top>=-10&&r.top<10});
