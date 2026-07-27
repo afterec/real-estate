@@ -274,6 +274,17 @@
   }
   nav.dots a{width:7px;height:7px;border-radius:50%;background:rgba(244,242,238,.25);transition:.2s}
   nav.dots a.active{background:var(--red);transform:scale(1.35)}
+  /* ---------- seletor de idioma ---------- */
+  .lang{position:fixed;left:1.6rem;bottom:1.4rem;z-index:70;font-family:var(--sans)}
+  .lang-btn{display:flex;align-items:center;gap:.5rem;background:rgba(22,22,24,.55);backdrop-filter:blur(4px);border:1px solid rgba(244,242,238,.2);border-radius:2rem;color:var(--ink-dim);font-family:var(--sans);font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;padding:.55rem 1.15rem;cursor:pointer;transition:color .2s,border-color .2s}
+  .lang-btn:hover{color:var(--red-soft);border-color:var(--red-dim)}
+  .lang-btn svg{width:14px;height:14px}
+  .lang-menu{position:absolute;left:0;bottom:calc(100% + 10px);background:#1e1e21;border:1px solid rgba(244,242,238,.14);border-radius:6px;padding:.35rem;display:none;flex-direction:column;min-width:10rem;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  .lang.open .lang-menu{display:flex}
+  .lang-menu button{background:none;border:0;color:var(--ink-dim);font-family:var(--sans);font-size:.8rem;font-weight:400;letter-spacing:.04em;text-align:left;padding:.55rem .85rem;border-radius:4px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1.2rem;transition:background .15s,color .15s}
+  .lang-menu button:hover{background:rgba(244,242,238,.06);color:var(--ink)}
+  .lang-menu button.active{color:var(--red-soft)}
+  .lang-menu button.active:after{content:'●';font-size:.45rem;color:var(--red)}
   /* ---------- responsive (telemóvel: página fluida, sem slides fixos) ---------- */
   @media(max-width:860px){
     main{height:auto;overflow-y:visible;scroll-snap-type:none}
@@ -300,6 +311,7 @@
     .step:before{top:2px}
     .num{left:1.4rem;top:1.6rem}
     a.back{right:1.4rem;top:1.4rem}
+    .lang{left:1.2rem;bottom:1.2rem}
     nav.dots{display:none}
     .gridslide .head{padding:0 7vw}
     .photogrid{grid-template-columns:1fr 1fr;height:auto;grid-auto-rows:34vw;padding:0 7vw}
@@ -673,6 +685,19 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
 </a>
 
+<div class="lang" id="lang">
+  <button class="lang-btn" id="langBtn" type="button" aria-haspopup="true" aria-label="Idioma / Language">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15.3 15.3 0 0 1 0 18M12 3a15.3 15.3 0 0 0 0 18"/></svg>
+    <span id="langCode">PT</span>
+  </button>
+  <div class="lang-menu">
+    <button type="button" data-lang="pt" class="active">Português</button>
+    <button type="button" data-lang="en">English</button>
+    <button type="button" data-lang="es">Español</button>
+    <button type="button" data-lang="it">Italiano</button>
+  </div>
+</div>
+
 <script>
   const slides=[...document.querySelectorAll('section.slide')];
   const dots=document.getElementById('dots');
@@ -727,6 +752,271 @@
     if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slides[Math.min(cur+1,slides.length-1)]?.scrollIntoView()}
     if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slides[Math.max(cur-1,0)]?.scrollIntoView()}
   });
+
+  /* ---------- sistema multilingue ----------
+     O PT no HTML é a fonte; ao mudar texto PT, atualizar a chave correspondente em I18N.
+     Persistência: localStorage. Link direto por língua: ?lang=en|es|it */
+  const LANGS=['pt','en','es','it'];
+  const L10N_MAP={
+    's1.sub':'#s1 .sub',
+    'n2':'#s2 .num','s2.k':'#s2 .kicker','s2.h':'#s2 h2','s2.b':'#s2 p.body',
+    'n3':'#s3 .num','s3.sem':'#s3 .ccol.sem .csub','s3.semlist':'#s3 .ccol.sem ul','s3.com':'#s3 .ccol.com .csub','s3.comlist':'#s3 .ccol.com ul','s3.fonte':'#s3 .fonte','s3.k':'#s3 .kicker','s3.h':'#s3 h2','s3.b':'#s3 .text p.body',
+    'n4':'#s4 .num','s4.k':'#s4 .kicker','s4.h':'#s4 h2','s4.b':'#s4 p.body','s4.c1':'#s4 .ramify .chip:nth-child(1)','s4.c2':'#s4 .ramify .chip:nth-child(2)','s4.c3':'#s4 .ramify .chip:nth-child(3)','s4.c4':'#s4 .ramify .chip:nth-child(4)',
+    'n5':'#s5 .num','s5.k':'#s5 .kicker','s5.h':'#s5 h2','s5.c1':'#s5 .menu-col:nth-child(1) h3','s5.c2':'#s5 .menu-col:nth-child(2) h3',
+    's5.m1':'#s5 .menu-col:nth-child(1) li:nth-child(1) a','s5.m2':'#s5 .menu-col:nth-child(1) li:nth-child(2) a','s5.m3':'#s5 .menu-col:nth-child(1) li:nth-child(3) a','s5.m4':'#s5 .menu-col:nth-child(1) li:nth-child(4) a',
+    's5.m5':'#s5 .menu-col:nth-child(2) li:nth-child(1) a','s5.m6':'#s5 .menu-col:nth-child(2) li:nth-child(2) a','s5.m7':'#s5 .menu-col:nth-child(2) li:nth-child(3) a','s5.m8':'#s5 .menu-col:nth-child(2) li:nth-child(4) a','s5.m9':'#s5 .menu-col:nth-child(2) li:nth-child(5) a','s5.m10':'#s5 .menu-col:nth-child(2) li:nth-child(6) a',
+    's5.note':'#s5 .menu-note',
+    'n6':'#s6 .num','s6.k':'#s6 .kicker','s6.h':'#s6 h2','s6.b':'#s6 p.body',
+    'n7':'#s7 .num','s7.k':'#s7 .kicker','s7.h':'#s7 h2','s7.b':'#s7 p.body',
+    'n7b':'#s7b .num','s7b.k':'#s7b .kicker','s7b.h':'#s7b h2','s7b.b':'#s7b p.body',
+    'n8':'#s8 .num','s8.k':'#s8 .kicker','s8.h':'#s8 h2','s8.b':'#s8 p.body',
+    's9.k':'#s9 .kicker','s9.h':'#s9 h2','s9.b':'#s9 p.body',
+    's10.k':'#s10 .kicker','s10.h':'#s10 h2','s10.b':'#s10 p.body',
+    'n11':'#s11 .num','s11.k':'#s11 .kicker','s11.h':'#s11 h2','s11.b':'#s11 p.body',
+    'n12':'#s12 .num','s12.k':'#s12 .kicker','s12.h':'#s12 h2','s12.st1':'#s12 .step:nth-child(1)','s12.st2':'#s12 .step:nth-child(2)','s12.st3':'#s12 .step:nth-child(3)','s12.st4':'#s12 .step:nth-child(4)','s12.st5':'#s12 .step:nth-child(5)','s12.badge':'#s12 .badge','s12.b':'#s12 p.body',
+    'n13':'#s13 .num','s13.k':'#s13 .kicker','s13.h':'#s13 h2','s13.p1l':'#s13 .pk:nth-child(1) ul','s13.p1q':'#s13 .pk:nth-child(1) .quem','s13.p2l':'#s13 .pk:nth-child(2) ul','s13.p2q':'#s13 .pk:nth-child(2) .quem','s13.p3l':'#s13 .pk:nth-child(3) ul','s13.p3q':'#s13 .pk:nth-child(3) .quem','s13.p4l':'#s13 .pk:nth-child(4) ul','s13.p4q':'#s13 .pk:nth-child(4) .quem','s13.note':'#s13 .pk-note',
+    's14.h':'#s14 h2','s14.b':'#s14 p.body','s14.btn':'#s14 .btn'
+  };
+  const I18N={
+  en:{
+    's1.sub':"An audiovisual production service <span class='subq'>for luxury real estate.</span>",
+    'n2':"02 · AFTEREC",'s2.k':"Who we are",
+    's2.h':"We don't make “a video”.<br><span class='oneline'>We build the <em>image</em> of a property.</span>",
+    's2.b':"AfteREC is a <strong>film production company</strong>. We produce content that <strong>holds the viewer's attention</strong>: through narrative, shot selection, lighting and set decoration. For every property, we show the best the house has to offer, its uniqueness, in a visual piece that makes people want to know more. We seek to work with <strong>unique, exclusive properties</strong>, mainly in the luxury segment, and this content <strong>strengthens the personal brand of the agent and of the company</strong> behind the sale.<br><br>We coordinate the best professionals for each piece of content and make sure everything we produce maintains a high standard of quality. What you can expect is not just the delivery of an asset: it is the <strong>management of all the marketing content for a property</strong>, a development or a project, with a focus on cinematic, carefully crafted pieces.",
+    'n3':"03 · THE MARKET",
+    's3.sem':"enquiries on a listing <strong>without video</strong>",
+    's3.semlist':"<li>The listing looks like every other</li><li>Viewings full of curious visitors</li><li>More time on the market</li>",
+    's3.com':"enquiries on a listing <strong>with video</strong> (4× more)",
+    's3.comlist':"<li>The property stands out and justifies its price</li><li>Buyers arrive at the viewing already qualified</li><li>Less time on the market</li>",
+    's3.fonte':"Source: National Association of Realtors (listings with video receive +403% more enquiries).",
+    's3.k':"Why this matters",
+    's3.h':"In luxury, the challenge isn't exposure. It's <em>sustaining value</em>.",
+    's3.b':"Anyone can make a video today, but few create content with <strong>the language of cinema that also works online</strong>. That is what changes the positioning of the property and of whoever sells it: it speeds up the sale, filters out the merely curious, improves lead quality and means buyers arrive at the viewing already understanding the house. And we make sure all of this happens.<br><br>The better and more compelling the content, the more enquiries it generates and <strong>the less time the property spends on the market</strong>. And less time on the market means lower costs: maintaining a luxury property can cost €5,000 to €10,000 a month in gardens, electricity, water and everything needed to keep it impeccable. Selling faster means passing those costs on to the buyer sooner.",
+    'n4':"04 · THE RETURN",'s4.k':"One investment, two returns",
+    's4.h':"Everything we produce serves <em>two purposes</em>.",
+    's4.b':"Each piece <strong>sells the property</strong> and, at the same time, <strong>promotes whoever is selling it</strong>: the developer, the architecture studio, the agency, the estate agent. It elevates the showreel, the social media and the promotional materials of whoever presents it. And the content doesn't stop being useful once the property sells: it keeps working for the marketing and visibility of whoever commissioned it.",
+    's4.c1':"Portals",'s4.c2':"Social media",'s4.c3':"Website",'s4.c4':"Marketing materials",
+    'n5':"05 · THE SYSTEM",'s5.k':"The content system",
+    's5.h':"Everything a property may need, <em>in one place</em>.",
+    's5.c1':"Essential",'s5.c2':"To go further",
+    's5.m1':"Architectural photography",'s5.m2':"Cinematic video",'s5.m3':"Aerial footage (FPV drone)",'s5.m4':"Social media content",
+    's5.m5':"Construction time-lapse",'s5.m6':"Renders & 3D",'s5.m7':"Dedicated property website",'s5.m8':"360º photography tour",'s5.m9':"Guided video tour",'s5.m10':"Printed book / catalogue",
+    's5.note':"Together, we choose what makes sense for each property. Nothing is imposed. Click on any content to learn more, or <a href='#s13'>see the content packages →</a>",
+    'n6':"06 · PHOTOGRAPHY",'s6.k':"Architectural photography",
+    's6.h':"We build every <em>frame</em>.",
+    's6.b':"From 15 to more than 35 images captured and edited by <strong>photographers specialised in architecture</strong>. Attention to light, composition and the reading of materials, to convey the architecture, the design of the space and the presence of the house in its setting, across portals, social media and all the property's other materials.",
+    'n7':"07 · VIDEO",'s7.k':"Cinematic video",
+    's7.h':"It's not an ad. It's a <em>film</em>.",
+    's7.b':"A longer video, produced to the standards of cinema: a crew with cinematography, lighting and art direction, and post-production with colour grading. The <strong>script is the essential piece</strong>: it is the narrative that holds the viewer, and it can be serious, playful, or convey a lifestyle the buyer sees themselves in and that makes them want the house. It is the piece that creates emotion and presents the property as a premium, one-of-a-kind product.<br><br>Ideal for truly unique properties and projects that deserve to reach a universal audience and captivate it at first sight. And it says a lot about whoever commissions it: an agency or brand that presents a video like this shows it cares about aesthetics and narrative, and showcases its portfolio at the highest level.",
+    'n7b':"08 · VIDEO TOUR",'s7b.k':"Guided video tour",
+    's7b.h':"For those who want to know the property <em>in depth</em>.",
+    's7b.b':"A long format, up to 30 minutes depending on the size of the property, dedicated to <strong>YouTube</strong>. It walks through the house room by room and tells its story to those who genuinely want to know the property before deciding on an investment of this scale.<br><br>It is a video built for <strong>organic reach</strong>: on average, a video like this sits around half a million views, and truly exceptional properties reach tens of millions of views, depending on the exclusivity of the property.<br><br>The format has been strongly explored in the <strong>United States over the last five years</strong>, with results plain to see in views and in sales closed through this content. In Portugal almost no company does it, and that is one more reason we stand out by bringing it here.",
+    'n8':"09 · SOCIAL MEDIA",'s8.k':"Social media content",
+    's8.h':"From the air, and <em>over time</em>.",
+    's8.b':"Short videos with dynamic, motion-driven edits, plus photographs of the property, made to grab attention and generate more reach. The <strong>FPV drone footage</strong> flies through every room in one continuous, cinematic trajectory, shows the house's relationship with the land and its surroundings, and reveals the property's full potential in the fastest way, exactly what the social media viewer is looking for: understanding the house in seconds and staying hooked from the very first moment.<br><br>For properties under construction, a <strong>monthly time-lapse</strong> documents the build from day one to delivery: ideal for developments and developers. And when the project calls for it, we create content with <strong>artificial intelligence</strong>, which we also use in the editing of some social media content.",
+    's9.k':"Renders & 3D content",
+    's9.h':"The property, <em>before it exists</em>.",
+    's9.b':"Renders and 3D video for properties that don't exist yet: plots with approved projects, off-plan developments or unfinished builds. They show the full potential of the space with quality close to the final result and make it possible to sell off-plan, long before the build is complete.<br><br>Excellent for developers, agents and landowners who need to communicate what still only exists on paper.",
+    's10.k':"Dedicated website and 360º photography tour",
+    's10.h':"One link that <em>brings everything together</em>.",
+    's10.b':"The dedicated website is the piece that centralises the property's communication: the photographs, the cinematic video, the video tour and the 360º photography tour, at a single address and with control over who arrives.<br><br>The <strong>360º photography tour</strong> is a content of its own: 360º photographs of each room create a virtual house the buyer can walk through remotely, room by room, on any device. It helps filter viewings: whoever takes the tour has already understood what the property is like, and whoever books a viewing after that does so because they are genuinely interested and want to see it in person.",
+    'n11':"12 · PRINT",'s11.k':"Printed book / catalogue",
+    's11.h':"A piece that <em>stays</em>.",
+    's11.b':"A hardcover book or catalogue, with the property's selected photography and text. Ideal for unique houses and architectural projects with a story to tell: it shows what was envisioned and how it was built.<br><br>It is handed over at qualified viewings, offered to the client at closing, and it stays: a beautiful object that works as a decorative piece and doesn't vanish like a link.",
+    'n12':"13 · PROCESS",'s12.k':"How we work",
+    's12.h':"One process, a specialised team, <em>one deadline</em>.",
+    's12.st1':"<h4>Briefing</h4><p>The property, the points to highlight, the destination channels.</p>",
+    's12.st2':"<h4>Pre-production</h4><p>Script, crew, equipment, permits, schedule.</p>",
+    's12.st3':"<h4>Shoot</h4><p>One day at the property. Preview sent that same day.</p>",
+    's12.st4':"<h4>Post-production</h4><p>Editing, colour grading, licensed music, revisions.</p>",
+    's12.st5':"<h4>Delivery</h4><p>All formats, by channel, with usage guidelines.</p>",
+    's12.badge':"The 10-to-12-day cycle<small>from the start of pre-production</small>",
+    's12.b':"The production cycle <strong>takes 10 to 12 days</strong>, counted from the moment pre-production starts, with the proposal accepted and awarded and the schedule locked. The first meeting is where we understand what the property will need; right after, we align everything, with one or more <strong>briefing meetings</strong> to make sure the material is made exactly as required, within a provisional schedule we present. It is in this alignment that we choose the content to shoot and the professionals for each piece. You simply talk directly to us, and we take care of everything that is needed.",
+    'n13':"14 · PACKAGES",'s13.k':"Content packages",
+    's13.h':"Four starting points, <em>one tailored package</em>.",
+    's13.p1l':"<li>1 social media video</li><li>or social media video + architectural photography</li>",
+    's13.p1q':"The essential package",
+    's13.p2l':"<li>Editorial video (30–45 s)</li><li>Architectural photography</li><li>Aerial footage (FPV drone)</li><li>1 social media video</li>",
+    's13.p2q':"For recurring projects and luxury properties",
+    's13.p3l':"<li>Cinematic video (1–2 min)</li><li>Architectural photography</li><li>Aerial footage (FPV drone)</li><li>1 social media video</li>",
+    's13.p3q':"For luxury properties",
+    's13.p4l':"<li>Everything in Signature</li><li>Dedicated property website</li><li>Integrated lead management</li>",
+    's13.p4q':"For developments and one-of-a-kind properties",
+    's13.note':"Prices excl. VAT. Each package adapts to the property: components can be added or removed, and that is what makes the value vary within each package. The final value is stated in the proposal sent after the first discovery meeting. <a href='https://cal.com/afterec/discoverycall' target='_blank' rel='noopener'>Book a discovery meeting →</a>",
+    's14.h':"Every property deserves its own <em>presentation</em>.",
+    's14.b':"Together, we choose what your property needs. In a short meeting, we understand what you want to communicate and suggest the most suitable solutions to achieve those goals.",
+    's14.btn':"Book a meeting"
+  },
+  es:{
+    's1.sub':"Un servicio de producción audiovisual <span class='subq'>para inmuebles de lujo.</span>",
+    'n2':"02 · AFTEREC",'s2.k':"Quiénes somos",
+    's2.h':"No hacemos «un vídeo».<br><span class='oneline'>Construimos la <em>imagen</em> de un inmueble.</span>",
+    's2.b':"AfteREC es una <strong>productora de cine</strong>. Producimos contenidos que <strong>captan la atención del espectador</strong>: a través de la narrativa, la elección de planos, la iluminación y la decoración. Para cada inmueble, mostramos lo mejor que tiene la casa, su singularidad, en una pieza visual que despierta las ganas de conocer más. Buscamos trabajar con <strong>inmuebles únicos y exclusivos</strong>, principalmente en el sector del lujo, y estos contenidos <strong>refuerzan la marca personal del agente y de la empresa</strong> asociada a la venta del inmueble.<br><br>Coordinamos a los mejores profesionales para cada contenido y garantizamos que todo lo que producimos mantiene un nivel de calidad elevado. Lo que puede esperar no es solo la entrega de un material: es la <strong>gestión de todos los contenidos de marketing de un inmueble</strong>, de una promoción o de un proyecto, especialmente en contenidos cinematográficos y muy cuidados.",
+    'n3':"03 · EL MERCADO",
+    's3.sem':"contactos en un anuncio <strong>sin vídeo</strong>",
+    's3.semlist':"<li>El anuncio es igual a todos los demás</li><li>Visitas llenas de curiosos</li><li>Más tiempo en el mercado</li>",
+    's3.com':"contactos en un anuncio <strong>con vídeo</strong> (4× más)",
+    's3.comlist':"<li>El inmueble destaca y justifica su precio</li><li>Los compradores llegan cualificados a la visita</li><li>Menos tiempo en el mercado</li>",
+    's3.fonte':"Fuente: National Association of Realtors (los anuncios con vídeo reciben un +403% de contactos).",
+    's3.k':"Por qué importa",
+    's3.h':"En el lujo, el problema no es divulgar. Es <em>sostener el valor</em>.",
+    's3.b':"Hoy cualquiera hace un vídeo, pero pocos crean contenido con <strong>lenguaje de cine que al mismo tiempo funciona online</strong>. Eso es lo que cambia el posicionamiento del inmueble y de quien lo comercializa: acelera la venta, reduce los curiosos, mejora la calidad de los leads y hace que el comprador llegue a la visita entendiendo ya la casa. Y nosotros garantizamos que todo esto suceda.<br><br>Cuanto mejor y más atractivo es el contenido, más contactos genera y <strong>menos tiempo permanece el inmueble en el mercado</strong>. Y menos tiempo en el mercado significa menos costes: mantener un inmueble de lujo puede costar de 5.000 a 10.000 euros al mes, entre jardines, electricidad, agua y lo esencial para mantenerlo impecable. Vender más rápido es trasladar esos costes al comprador antes.",
+    'n4':"04 · EL RETORNO",'s4.k':"Una inversión, dos retornos",
+    's4.h':"Todo lo que producimos cumple <em>dos propósitos</em>.",
+    's4.b':"Cada pieza <strong>vende el inmueble</strong> y, al mismo tiempo, <strong>da visibilidad a quien lo comercializa</strong>: el promotor, el estudio de arquitectura, la agencia, el agente inmobiliario. Mejora el showreel, las redes sociales y los materiales de promoción de quien lo presenta. Y el contenido no deja de ser útil cuando el inmueble se vende: sigue trabajando para la divulgación y el marketing de quien lo contrató.",
+    's4.c1':"Portales",'s4.c2':"Redes sociales",'s4.c3':"Sitio web",'s4.c4':"Materiales de promoción",
+    'n5':"05 · EL SISTEMA",'s5.k':"El sistema de contenidos",
+    's5.h':"Todo lo que un inmueble puede necesitar, <em>en un solo lugar</em>.",
+    's5.c1':"Esencial",'s5.c2':"Para ir más lejos",
+    's5.m1':"Fotografía de arquitectura",'s5.m2':"Vídeo cinematográfico",'s5.m3':"Grabación aérea (dron FPV)",'s5.m4':"Contenidos para redes sociales",
+    's5.m5':"Time-lapse de obra",'s5.m6':"Renders y 3D",'s5.m7':"Web dedicada al inmueble",'s5.m8':"Tour con fotografía 360º",'s5.m9':"Vídeo-tour guiado",'s5.m10':"Libro / catálogo impreso",
+    's5.note':"Elegimos con usted lo que tiene sentido para cada inmueble. Nada es impuesto. Haga clic en cada contenido para conocerlo, o <a href='#s13'>vea los paquetes de contenidos →</a>",
+    'n6':"06 · FOTOGRAFÍA",'s6.k':"Fotografía de arquitectura",
+    's6.h':"Construimos cada <em>plano</em>.",
+    's6.b':"De 15 a más de 35 imágenes captadas y editadas por <strong>fotógrafos especializados en arquitectura</strong>. Atención a la luz, a la composición y a la lectura de los materiales, para transmitir la arquitectura, el diseño del espacio y la presencia de la casa en el lugar, en portales, redes y todos los demás materiales del inmueble.",
+    'n7':"07 · VÍDEO",'s7.k':"Vídeo cinematográfico",
+    's7.h':"No es un anuncio. Es una <em>película</em>.",
+    's7.b':"Un vídeo más largo, producido con las exigencias del cine: equipo con dirección de fotografía, iluminación y dirección de arte, y postproducción con corrección de color. El <strong>guion es la pieza fundamental</strong>: es la narrativa que atrapa a quien lo ve, y puede ser seria, cómica o transmitir un estilo de vida en el que el comprador se reconoce y que le hace desear la casa. Es la pieza que crea emoción y presenta el inmueble como un producto premium y único.<br><br>Ideal para inmuebles y proyectos verdaderamente únicos, que merecen llegar a un público universal y atraerlo a primera vista. Y dice mucho de quien lo encarga: una agencia o marca que presenta un vídeo así demuestra que se preocupa por la estética y la narrativa, y divulga su portfolio al más alto nivel.",
+    'n7b':"08 · VÍDEO-TOUR",'s7b.k':"Vídeo-tour guiado",
+    's7b.h':"Para quien quiere conocer el inmueble <em>a fondo</em>.",
+    's7b.b':"Un formato largo, que puede llegar a los 30 minutos según el tamaño del inmueble, dedicado a <strong>YouTube</strong>. Recorre la casa estancia por estancia y cuenta su historia a quien realmente quiere conocer el inmueble antes de decidir una inversión de esta dimensión.<br><br>Es un vídeo pensado para el <strong>alcance orgánico</strong>: de media, un vídeo de este tipo ronda el medio millón de visualizaciones, y los inmuebles verdaderamente excepcionales alcanzan decenas de millones de visualizaciones, según la exclusividad del inmueble.<br><br>El formato se ha explorado con fuerza en <strong>Estados Unidos en los últimos cinco años</strong>, con resultados a la vista en visualizaciones y en ventas cerradas a través de estos contenidos. En Portugal casi ninguna empresa lo hace, y también por eso destacamos al traerlo.",
+    'n8':"09 · REDES SOCIALES",'s8.k':"Contenidos para redes sociales",
+    's8.h':"Desde el aire, y <em>a lo largo del tiempo</em>.",
+    's8.b':"Vídeos cortos con ediciones dinámicas y con movimiento, y fotografías del inmueble, hechos para atrapar y generar más alcance. La <strong>grabación aérea con dron FPV</strong> recorre todas las estancias en una trayectoria continua y cinematográfica, muestra la relación de la casa con el terreno y el entorno, y revela todo el potencial del inmueble de la forma más rápida, exactamente lo que busca el espectador de las redes: entender la casa en segundos y quedar enganchado al vídeo desde el primer momento.<br><br>Para inmuebles en construcción, un <strong>time-lapse mensual</strong> documenta la obra desde el primer día hasta la entrega: ideal para promociones y promotoras. Y cuando el proyecto lo justifica, creamos contenidos con <strong>inteligencia artificial</strong>, que también usamos en la edición de algunos contenidos para redes.",
+    's9.k':"Renders y contenido 3D",
+    's9.h':"El inmueble, <em>antes de existir</em>.",
+    's9.b':"Renders y vídeo 3D para inmuebles que aún no existen: terrenos con proyecto aprobado, promociones sobre plano u obras por terminar. Muestran todo el potencial del espacio con una calidad cercana al resultado final y permiten vender sobre plano, mucho antes de que la obra esté lista.<br><br>Excelente para promotores, agentes y propietarios de terrenos que necesitan comunicar lo que todavía solo existe en el papel.",
+    's10.k':"Web dedicada y tour con fotografía 360º",
+    's10.h':"Un enlace que <em>lo centraliza todo</em>.",
+    's10.b':"La web dedicada es la pieza que centraliza la comunicación del inmueble: las fotografías, el vídeo cinematográfico, el vídeo-tour y el tour con fotografía 360º, en una sola dirección y con control sobre quién llega.<br><br>El <strong>tour con fotografía 360º</strong> es un contenido propio: fotografías 360º de cada estancia crean una casa virtual que el comprador recorre a distancia, estancia por estancia, en cualquier dispositivo. Ayuda a filtrar las visitas: quien hace el tour ya ha entendido cómo es el inmueble, y quien agenda una visita después es porque está realmente interesado y quiere conocerlo en persona.",
+    'n11':"12 · IMPRESO",'s11.k':"Libro / catálogo impreso",
+    's11.h':"Una pieza que <em>permanece</em>.",
+    's11.b':"Un libro o catálogo en tapa dura, con la fotografía y el texto escogidos del inmueble. Ideal para casas únicas y proyectos de arquitectura con historia que contar: muestra lo que se pensó y cómo se construyó.<br><br>Se entrega en visitas cualificadas, se regala al cliente en el cierre, y permanece: una pieza estéticamente bonita que funciona como objeto de decoración, no desaparece como un enlace.",
+    'n12':"13 · PROCESO",'s12.k':"Cómo trabajamos",
+    's12.h':"Un proceso, un equipo especializado, <em>un plazo</em>.",
+    's12.st1':"<h4>Briefing</h4><p>El inmueble, los puntos a destacar, los canales de destino.</p>",
+    's12.st2':"<h4>Preproducción</h4><p>Guion, equipo, material, permisos, calendario.</p>",
+    's12.st3':"<h4>Rodaje</h4><p>Un día en el inmueble. Preview enviada ese mismo día.</p>",
+    's12.st4':"<h4>Postproducción</h4><p>Edición, corrección de color, música licenciada, revisiones.</p>",
+    's12.st5':"<h4>Entrega</h4><p>Todos los formatos, por canal, con instrucciones de uso.</p>",
+    's12.badge':"El ciclo de 10 a 12 días<small>desde el arranque de la preproducción</small>",
+    's12.b':"El ciclo de producción <strong>dura de 10 a 12 días</strong>, contados desde el momento en que arranca la preproducción, con la propuesta aceptada y adjudicada y el calendario cerrado. La primera reunión sirve para entender lo que el inmueble va a necesitar; justo después hacemos el alineamiento, con una o más <strong>reuniones de briefing</strong> para garantizar que el material se hará exactamente como es necesario, dentro de un calendario provisional que presentamos. En ese alineamiento se eligen los contenidos a grabar y los profesionales para cada pieza. Basta con hablar directamente con nosotros y nos ocupamos de lo necesario.",
+    'n13':"14 · PAQUETES",'s13.k':"Paquetes de contenidos",
+    's13.h':"Cuatro puntos de partida, <em>un paquete a medida</em>.",
+    's13.p1l':"<li>1 vídeo para redes sociales</li><li>o vídeo para redes sociales + fotografía de arquitectura</li>",
+    's13.p1q':"El paquete esencial",
+    's13.p2l':"<li>Vídeo editorial (30–45 s)</li><li>Fotografía de arquitectura</li><li>Grabación aérea (dron FPV)</li><li>1 vídeo para redes sociales</li>",
+    's13.p2q':"Para proyectos recurrentes e inmuebles de lujo",
+    's13.p3l':"<li>Vídeo cinematográfico (1–2 min)</li><li>Fotografía de arquitectura</li><li>Grabación aérea (dron FPV)</li><li>1 vídeo para redes sociales</li>",
+    's13.p3q':"Para inmuebles de lujo",
+    's13.p4l':"<li>Todo lo del Signature</li><li>Web dedicada al inmueble</li><li>Gestión de leads integrada</li>",
+    's13.p4q':"Para promociones e inmuebles únicos",
+    's13.note':"Precios sin IVA. Cada paquete se ajusta al inmueble: los componentes pueden entrar o salir, y eso es lo que hace variar el valor dentro de cada paquete. El valor final se indica en la propuesta enviada tras la primera reunión. <a href='https://cal.com/afterec/discoverycall' target='_blank' rel='noopener'>Reservar una primera reunión →</a>",
+    's14.h':"Cada inmueble merece su propia <em>presentación</em>.",
+    's14.b':"Elegimos con usted lo que su inmueble necesita. En una breve reunión, entendemos lo que quiere comunicar y sugerimos las soluciones más adecuadas para alcanzar esos objetivos.",
+    's14.btn':"Reservar reunión"
+  },
+  it:{
+    's1.sub':"Un servizio di produzione audiovisiva <span class='subq'>per immobili di lusso.</span>",
+    'n2':"02 · AFTEREC",'s2.k':"Chi siamo",
+    's2.h':"Non facciamo «un video».<br><span class='oneline'>Costruiamo l'<em>immagine</em> di un immobile.</span>",
+    's2.b':"AfteREC è una <strong>casa di produzione cinematografica</strong>. Produciamo contenuti che <strong>catturano l'attenzione dello spettatore</strong>: attraverso la narrazione, la scelta delle inquadrature, l'illuminazione e la scenografia. Per ogni immobile mostriamo il meglio che la casa ha da offrire, la sua unicità, in un racconto visivo che fa venire voglia di saperne di più. Cerchiamo di lavorare con <strong>immobili unici ed esclusivi</strong>, soprattutto nel settore del lusso, e questi contenuti <strong>rafforzano il brand personale dell'agente e dell'azienda</strong> legata alla vendita dell'immobile.<br><br>Coordiniamo i migliori professionisti per ogni contenuto e garantiamo che tutto ciò che produciamo mantenga un livello di qualità elevato. Ciò che può aspettarsi non è solo la consegna di un materiale: è la <strong>gestione di tutti i contenuti di marketing di un immobile</strong>, di un complesso residenziale o di un progetto, con particolare attenzione ai contenuti cinematografici e curati nei dettagli.",
+    'n3':"03 · IL MERCATO",
+    's3.sem':"contatti per un annuncio <strong>senza video</strong>",
+    's3.semlist':"<li>L'annuncio è uguale a tutti gli altri</li><li>Visite piene di curiosi</li><li>Più tempo sul mercato</li>",
+    's3.com':"contatti per un annuncio <strong>con video</strong> (4× di più)",
+    's3.comlist':"<li>L'immobile si distingue e giustifica il prezzo</li><li>Gli acquirenti arrivano alla visita già qualificati</li><li>Meno tempo sul mercato</li>",
+    's3.fonte':"Fonte: National Association of Realtors (gli annunci con video ricevono il +403% di contatti).",
+    's3.k':"Perché è importante",
+    's3.h':"Nel lusso, il problema non è farsi vedere. È <em>sostenere il valore</em>.",
+    's3.b':"Oggi chiunque può fare un video, ma pochi creano contenuti con <strong>un linguaggio cinematografico che allo stesso tempo funziona online</strong>. È questo che cambia il posizionamento dell'immobile e di chi lo vende: accelera la vendita, riduce i curiosi, migliora la qualità dei contatti e fa arrivare l'acquirente alla visita già consapevole della casa. E noi garantiamo che tutto questo accada.<br><br>Più il contenuto è curato e coinvolgente, più contatti genera e <strong>meno tempo l'immobile resta sul mercato</strong>. E meno tempo sul mercato significa meno costi: mantenere un immobile di lusso può costare da 5.000 a 10.000 euro al mese, tra giardini, elettricità, acqua e tutto ciò che serve per tenerlo impeccabile. Vendere più in fretta significa trasferire prima quei costi all'acquirente.",
+    'n4':"04 · IL RITORNO",'s4.k':"Un investimento, due ritorni",
+    's4.h':"Tutto ciò che produciamo serve <em>due scopi</em>.",
+    's4.b':"Ogni contenuto <strong>vende l'immobile</strong> e, allo stesso tempo, <strong>promuove chi lo commercializza</strong>: il promotore, lo studio di architettura, l'agenzia, l'agente immobiliare. Arricchisce lo showreel, i social e i materiali promozionali di chi lo presenta. E il contenuto non smette di essere utile quando l'immobile viene venduto: continua a lavorare per la promozione e il marketing di chi lo ha commissionato.",
+    's4.c1':"Portali",'s4.c2':"Social media",'s4.c3':"Sito web",'s4.c4':"Materiali promozionali",
+    'n5':"05 · IL SISTEMA",'s5.k':"Il sistema di contenuti",
+    's5.h':"Tutto ciò di cui un immobile può avere bisogno, <em>in un unico posto</em>.",
+    's5.c1':"Essenziale",'s5.c2':"Per andare oltre",
+    's5.m1':"Fotografia di architettura",'s5.m2':"Video cinematografico",'s5.m3':"Riprese aeree (drone FPV)",'s5.m4':"Contenuti per i social",
+    's5.m5':"Time-lapse del cantiere",'s5.m6':"Render e 3D",'s5.m7':"Sito web dedicato all'immobile",'s5.m8':"Tour con fotografia a 360º",'s5.m9':"Video tour guidato",'s5.m10':"Libro / catalogo stampato",
+    's5.note':"Scegliamo insieme a lei ciò che ha senso per ogni immobile. Nulla è imposto. Clicchi su ogni contenuto per scoprirlo, oppure <a href='#s13'>veda i pacchetti di contenuti →</a>",
+    'n6':"06 · FOTOGRAFIA",'s6.k':"Fotografia di architettura",
+    's6.h':"Costruiamo ogni <em>inquadratura</em>.",
+    's6.b':"Da 15 a oltre 35 immagini scattate e post-prodotte da <strong>fotografi specializzati in architettura</strong>. Attenzione alla luce, alla composizione e alla lettura dei materiali, per trasmettere l'architettura, il disegno dello spazio e la presenza della casa nel luogo, su portali, social e tutti gli altri materiali dell'immobile.",
+    'n7':"07 · VIDEO",'s7.k':"Video cinematografico",
+    's7.h':"Non è un annuncio. È un <em>film</em>.",
+    's7.b':"Un video più lungo, prodotto con gli standard del cinema: una troupe con direzione della fotografia, luci e direzione artistica, e post-produzione con color grading. La <strong>sceneggiatura è l'elemento fondamentale</strong>: è la narrazione che cattura chi guarda, e può essere seria, ironica o trasmettere uno stile di vita in cui l'acquirente si riconosce e che gli fa desiderare la casa. È il contenuto che crea emozione e presenta l'immobile come un prodotto premium e unico.<br><br>Ideale per immobili e progetti davvero unici, che meritano di raggiungere un pubblico universale e di conquistarlo al primo sguardo. E dice molto su chi lo commissiona: un'agenzia o un brand che presenta un video così dimostra attenzione all'estetica e alla narrazione, e valorizza il proprio portfolio al massimo livello.",
+    'n7b':"08 · VIDEO TOUR",'s7b.k':"Video tour guidato",
+    's7b.h':"Per chi vuole conoscere l'immobile <em>a fondo</em>.",
+    's7b.b':"Un formato lungo, che può arrivare a 30 minuti a seconda delle dimensioni dell'immobile, dedicato a <strong>YouTube</strong>. Attraversa la casa stanza per stanza e ne racconta la storia a chi vuole davvero conoscere l'immobile prima di decidere un investimento di questa portata.<br><br>È un video pensato per la <strong>portata organica</strong>: in media, un video di questo tipo si aggira sul mezzo milione di visualizzazioni, e gli immobili davvero eccezionali arrivano a decine di milioni di visualizzazioni, a seconda dell'esclusività dell'immobile.<br><br>Il formato è stato fortemente esplorato negli <strong>Stati Uniti negli ultimi cinque anni</strong>, con risultati evidenti nelle visualizzazioni e nelle vendite chiuse attraverso questi contenuti. In Portogallo quasi nessuna azienda lo fa, ed è anche per questo che ci distinguiamo portandolo qui.",
+    'n8':"09 · SOCIAL MEDIA",'s8.k':"Contenuti per i social",
+    's8.h':"Dall'alto, e <em>nel tempo</em>.",
+    's8.b':"Video brevi con montaggi dinamici e pieni di movimento, e fotografie dell'immobile, pensati per catturare e generare più portata. Le <strong>riprese aeree con drone FPV</strong> attraversano tutte le stanze in una traiettoria continua e cinematografica, mostrano il rapporto della casa con il terreno e il contesto, e rivelano tutto il potenziale dell'immobile nel modo più rapido, esattamente ciò che cerca chi guarda i social: capire la casa in pochi secondi e restare incollato al video fin dal primo istante.<br><br>Per gli immobili in costruzione, un <strong>time-lapse mensile</strong> documenta il cantiere dal primo giorno alla consegna: ideale per complessi residenziali e promotori. E quando il progetto lo giustifica, creiamo contenuti con l'<strong>intelligenza artificiale</strong>, che usiamo anche nel montaggio di alcuni contenuti per i social.",
+    's9.k':"Render e contenuti 3D",
+    's9.h':"L'immobile, <em>prima che esista</em>.",
+    's9.b':"Render e video 3D per immobili che ancora non esistono: terreni con progetto approvato, complessi residenziali su carta o cantieri da completare. Mostrano tutto il potenziale dello spazio con una qualità vicina al risultato finale e permettono di vendere in pre-vendita, molto prima che i lavori siano finiti.<br><br>Eccellente per promotori, agenti e proprietari di terreni che devono comunicare ciò che esiste ancora solo sulla carta.",
+    's10.k':"Sito web dedicato e tour con fotografia a 360º",
+    's10.h':"Un link che <em>centralizza tutto</em>.",
+    's10.b':"Il sito web dedicato è l'elemento che centralizza la comunicazione dell'immobile: le fotografie, il video cinematografico, il video tour e il tour con fotografia a 360º, in un unico indirizzo e con il controllo su chi arriva.<br><br>Il <strong>tour con fotografia a 360º</strong> è un contenuto a sé: fotografie a 360º di ogni stanza creano una casa virtuale che l'acquirente percorre a distanza, stanza per stanza, da qualsiasi dispositivo. Aiuta a filtrare le visite: chi fa il tour ha già capito com'è l'immobile, e chi prenota una visita dopo lo fa perché è davvero interessato e vuole vederlo dal vivo.",
+    'n11':"12 · STAMPA",'s11.k':"Libro / catalogo stampato",
+    's11.h':"Un oggetto che <em>resta</em>.",
+    's11.b':"Un libro o catalogo con copertina rigida, con la fotografia e i testi scelti dell'immobile. Ideale per case uniche e progetti di architettura con una storia da raccontare: mostra ciò che è stato pensato e come è stato costruito.<br><br>Si consegna nelle visite qualificate, si regala al cliente alla chiusura, e resta: un oggetto esteticamente bello che funziona come elemento d'arredo, non scompare come un link.",
+    'n12':"13 · PROCESSO",'s12.k':"Come lavoriamo",
+    's12.h':"Un processo, un team specializzato, <em>una scadenza</em>.",
+    's12.st1':"<h4>Briefing</h4><p>L'immobile, i punti da valorizzare, i canali di destinazione.</p>",
+    's12.st2':"<h4>Pre-produzione</h4><p>Sceneggiatura, troupe, attrezzatura, permessi, calendario.</p>",
+    's12.st3':"<h4>Riprese</h4><p>Un giorno nell'immobile. Preview inviata lo stesso giorno.</p>",
+    's12.st4':"<h4>Post-produzione</h4><p>Montaggio, color grading, musica su licenza, revisioni.</p>",
+    's12.st5':"<h4>Consegna</h4><p>Tutti i formati, per canale, con istruzioni d'uso.</p>",
+    's12.badge':"Il ciclo di 10-12 giorni<small>dall'avvio della pre-produzione</small>",
+    's12.b':"Il ciclo di produzione <strong>dura da 10 a 12 giorni</strong>, contati dal momento in cui parte la pre-produzione, con la proposta accettata e confermata e il calendario definito. Il primo incontro serve a capire di cosa avrà bisogno l'immobile; subito dopo facciamo l'allineamento, con uno o più <strong>incontri di briefing</strong> per garantire che il materiale venga realizzato esattamente come serve, all'interno di un calendario provvisorio che presentiamo. È in questo allineamento che si scelgono i contenuti da girare e i professionisti per ogni pezzo. Basta parlare direttamente con noi e ci occupiamo noi di tutto il necessario.",
+    'n13':"14 · PACCHETTI",'s13.k':"Pacchetti di contenuti",
+    's13.h':"Quattro punti di partenza, <em>un pacchetto su misura</em>.",
+    's13.p1l':"<li>1 video per i social</li><li>oppure video per i social + fotografia di architettura</li>",
+    's13.p1q':"Il pacchetto essenziale",
+    's13.p2l':"<li>Video editoriale (30–45 s)</li><li>Fotografia di architettura</li><li>Riprese aeree (drone FPV)</li><li>1 video per i social</li>",
+    's13.p2q':"Per progetti ricorrenti e immobili di lusso",
+    's13.p3l':"<li>Video cinematografico (1–2 min)</li><li>Fotografia di architettura</li><li>Riprese aeree (drone FPV)</li><li>1 video per i social</li>",
+    's13.p3q':"Per immobili di lusso",
+    's13.p4l':"<li>Tutto ciò che include Signature</li><li>Sito web dedicato all'immobile</li><li>Gestione dei lead integrata</li>",
+    's13.p4q':"Per complessi residenziali e immobili unici",
+    's13.note':"Prezzi IVA esclusa. Ogni pacchetto si adatta all'immobile: i componenti possono entrare o uscire, ed è questo che fa variare il valore all'interno di ogni pacchetto. Il valore finale è indicato nella proposta inviata dopo il primo incontro conoscitivo. <a href='https://cal.com/afterec/discoverycall' target='_blank' rel='noopener'>Prenotare un primo incontro →</a>",
+    's14.h':"Ogni immobile merita la sua <em>presentazione</em>.",
+    's14.b':"Scegliamo insieme a lei ciò di cui il suo immobile ha bisogno. In un breve incontro, capiamo cosa vuole comunicare e suggeriamo le soluzioni più adatte per raggiungere questi obiettivi.",
+    's14.btn':"Prenota un incontro"
+  }};
+  const TITLES={pt:"AfteREC Real Estate — Apresentação do Serviço",en:"AfteREC Real Estate — Service Presentation",es:"AfteREC Real Estate — Presentación del Servicio",it:"AfteREC Real Estate — Presentazione del Servizio"};
+  const ARROWT={pt:"Continuar",en:"Continue",es:"Continuar",it:"Continua"};
+  const BACK_TR={en:"← All contents",es:"← Todos los contenidos",it:"← Tutti i contenuti"};
+  const L10N_EL={},L10N_PT={};
+  Object.entries(L10N_MAP).forEach(([k,sel])=>{const el=document.querySelector(sel);if(el){L10N_EL[k]=el;L10N_PT[k]=el.innerHTML}});
+  const backs=[...document.querySelectorAll('a.back')];
+  const BACK_PT=backs.length?backs[0].innerHTML:'';
+  const langBox=document.getElementById('lang');
+  const langCode=document.getElementById('langCode');
+  const langOpts=[...langBox.querySelectorAll('.lang-menu button')];
+  function setLang(l){
+    if(!LANGS.includes(l))l='pt';
+    const d=I18N[l]||{};
+    Object.keys(L10N_EL).forEach(k=>{L10N_EL[k].innerHTML=(l!=='pt'&&d[k])?d[k]:L10N_PT[k]});
+    backs.forEach(b=>{b.innerHTML=(l!=='pt'&&BACK_TR[l])?BACK_TR[l]:BACK_PT});
+    document.documentElement.lang=(l==='pt')?'pt-PT':l;
+    document.title=TITLES[l]||TITLES.pt;
+    arrow.title=ARROWT[l]||ARROWT.pt;
+    langCode.textContent=l.toUpperCase();
+    langOpts.forEach(o=>o.classList.toggle('active',o.dataset.lang===l));
+    try{localStorage.setItem('afterec_lang',l)}catch(e){}
+  }
+  document.getElementById('langBtn').addEventListener('click',e=>{e.stopPropagation();langBox.classList.toggle('open')});
+  langOpts.forEach(o=>o.addEventListener('click',()=>{setLang(o.dataset.lang);langBox.classList.remove('open')}));
+  document.addEventListener('click',e=>{if(!langBox.contains(e.target))langBox.classList.remove('open')});
+  let initLang='pt';
+  try{
+    const q=new URLSearchParams(location.search).get('lang');
+    const s=localStorage.getItem('afterec_lang');
+    initLang=LANGS.includes(q)?q:(LANGS.includes(s)?s:'pt');
+  }catch(e){}
+  setLang(initLang);
 </script>
 </body>
 </html>
