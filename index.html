@@ -138,6 +138,10 @@
   .statement .content{max-width:1040px;padding:0 2rem;text-align:center}
   .statement p.body{margin:0 auto}
   .deco{display:block;margin:2.2rem auto 0;width:min(22vw,290px);height:auto;opacity:.9}
+  .side-deco{position:absolute;top:50%;transform:translateY(-50%);width:min(16vw,280px);height:auto;opacity:.4;pointer-events:none;z-index:1}
+  .side-deco.l{left:2.2vw}
+  .side-deco.r{right:2.2vw}
+  @media(max-width:860px){.side-deco{display:none}}
   .oneline{white-space:nowrap}
   @media(max-width:900px){.oneline{white-space:normal}}
   /* ---------- menu slide ---------- */
@@ -675,6 +679,8 @@
 
   <!-- 15 · CTA -->
   <section class="slide statement cta" id="s14">
+    <img class="side-deco l" src="img/deco-camera.png" alt="">
+    <img class="side-deco r" src="img/deco-claquete.png" alt="">
     <div class="content">
       <h2>Cada imóvel merece a sua própria <em>apresentação</em>.</h2>
       <p class="body" style="margin:0 auto">Escolhemos consigo o que o seu imóvel precisa. Numa breve reunião, percebemos o que pretende comunicar e sugerimos as soluções mais adequadas para atingir esses objetivos.</p>
