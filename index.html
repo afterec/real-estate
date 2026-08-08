@@ -86,6 +86,18 @@
   .capa h1{animation-delay:.45s}
   .capa .rule{animation-delay:.7s}
   .capa .sub{animation-delay:.9s}
+  /* ---------- reveal suave do conteúdo ao entrar em cada slide ---------- */
+  section.slide:not(.capa)>*:not(.bgimg):not(.veil){
+    opacity:0;transform:translateY(28px);
+    transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1);
+  }
+  section.slide:not(.capa)>*:nth-child(2){transition-delay:.1s}
+  section.slide:not(.capa)>*:nth-child(3){transition-delay:.2s}
+  section.slide:not(.capa)>*:nth-child(n+4){transition-delay:.3s}
+  section.slide.in:not(.capa)>*:not(.bgimg):not(.veil){opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    section.slide:not(.capa)>*:not(.bgimg):not(.veil){opacity:1;transform:none;transition:none}
+  }
   .capa .logo{width:min(280px,46vw);height:auto;display:block;margin:0 0 .9rem}
   .capa h1{
     font-family:var(--sans);font-weight:400;
@@ -677,11 +689,14 @@
   const obs=new IntersectionObserver(es=>{
     es.forEach(e=>{
       if(e.isIntersecting){
+        e.target.classList.add('in');
         const i=slides.indexOf(e.target);
         links.forEach(l=>l.classList.remove('active'));
         links[i].classList.add('active');
         if(i>=slides.length-1){arrow.classList.add('hidden')}
         else{arrow.classList.remove('hidden');arrow.href='#'+slides[i+1].id}
+      }else{
+        e.target.classList.remove('in');
       }
     });
   },{threshold:.55});
@@ -701,11 +716,50 @@
       requestAnimationFrame(tick);
     })(t0);
   }
+  // transição suave entre slides (wheel + teclado + dots), estilo apresentação
+  const mainEl=document.querySelector('main');
+  const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const snapActive=()=>getComputedStyle(mainEl).scrollSnapType!=='none';
+  let sliding=false;
+  const curSlide=()=>Math.round(mainEl.scrollTop/mainEl.clientHeight);
+  function slideTo(i){
+    i=Math.max(0,Math.min(i,slides.length-1));
+    const from=mainEl.scrollTop,to=slides[i].offsetTop,d=to-from;
+    if(!d)return;
+    if(reduceMotion){mainEl.scrollTop=to;return}
+    sliding=true;
+    mainEl.style.scrollSnapType='none';   // o snap nativo interrompe a animação a meio
+    const t0=performance.now(),DUR=950;
+    (function step(now){
+      const p=Math.min((now-t0)/DUR,1);
+      const ease=1-Math.pow(1-p,4);       // easeOutQuart: arranque firme, chegada suave
+      mainEl.scrollTop=from+d*ease;
+      if(p<1)requestAnimationFrame(step);
+      else{
+        mainEl.style.scrollSnapType='';
+        setTimeout(()=>{sliding=false},400); // ignora a inércia residual do trackpad
+      }
+    })(t0);
+  }
+  mainEl.addEventListener('wheel',e=>{
+    if(!snapActive()&&!sliding)return;
+    e.preventDefault();
+    if(sliding||Math.abs(e.deltaY)<8)return;
+    slideTo(curSlide()+(e.deltaY>0?1:-1));
+  },{passive:false});
+  links.forEach((l,i)=>l.addEventListener('click',e=>{
+    if(!snapActive())return;
+    e.preventDefault();slideTo(i);
+  }));
+  arrow.addEventListener('click',e=>{
+    if(!snapActive())return;
+    e.preventDefault();slideTo(curSlide()+1);
+  });
   // navegação por teclado
   document.addEventListener('keydown',e=>{
-    const cur=slides.findIndex(s=>{const r=s.getBoundingClientRect();return r.top>=-10&&r.top<10});
-    if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slides[Math.min(cur+1,slides.length-1)]?.scrollIntoView()}
-    if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slides[Math.max(cur-1,0)]?.scrollIntoView()}
+    if(!snapActive()&&!sliding)return;
+    if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();if(!sliding)slideTo(curSlide()+1)}
+    if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();if(!sliding)slideTo(curSlide()-1)}
   });
 </script>
 </body>
