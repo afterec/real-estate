@@ -717,49 +717,57 @@
     })(t0);
   }
   // transição suave entre slides (wheel + teclado + dots), estilo apresentação
+  // Perseguição exponencial retargetável: cada impulso soma ao destino, por isso
+  // vários scrolls seguidos descem vários slides num movimento único e contínuo.
   const mainEl=document.querySelector('main');
   const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
   const snapActive=()=>getComputedStyle(mainEl).scrollSnapType!=='none';
-  let sliding=false;
+  let target=null,glideId=null,glideT=null,lastWT=0,lastWD=0;
   const curSlide=()=>Math.round(mainEl.scrollTop/mainEl.clientHeight);
+  const baseIdx=()=>glideId!==null?target:curSlide();
+  function glide(now){
+    if(glideT===null)glideT=now;
+    const dt=Math.min(now-glideT,50);glideT=now;
+    const to=slides[target].offsetTop,pos=mainEl.scrollTop,d=to-pos;
+    if(Math.abs(d)<.5){
+      mainEl.scrollTop=to;
+      mainEl.style.scrollSnapType='';
+      glideId=null;glideT=null;return;
+    }
+    const k=1-Math.pow(.9,dt/16.7);   // ~10%/frame a 60fps, independente do refresh rate
+    mainEl.scrollTop=pos+d*k;
+    glideId=requestAnimationFrame(glide);
+  }
   function slideTo(i){
-    i=Math.max(0,Math.min(i,slides.length-1));
-    const from=mainEl.scrollTop,to=slides[i].offsetTop,d=to-from;
-    if(!d)return;
-    if(reduceMotion){mainEl.scrollTop=to;return}
-    sliding=true;
-    mainEl.style.scrollSnapType='none';   // o snap nativo interrompe a animação a meio
-    const t0=performance.now(),DUR=950;
-    (function step(now){
-      const p=Math.min((now-t0)/DUR,1);
-      const ease=1-Math.pow(1-p,4);       // easeOutQuart: arranque firme, chegada suave
-      mainEl.scrollTop=from+d*ease;
-      if(p<1)requestAnimationFrame(step);
-      else{
-        mainEl.style.scrollSnapType='';
-        setTimeout(()=>{sliding=false},400); // ignora a inércia residual do trackpad
-      }
-    })(t0);
+    target=Math.max(0,Math.min(i,slides.length-1));
+    if(reduceMotion){mainEl.scrollTop=slides[target].offsetTop;target=null;return}
+    mainEl.style.scrollSnapType='none';   // o snap nativo lutaria contra a animação
+    if(glideId===null)glideId=requestAnimationFrame(glide);
   }
   mainEl.addEventListener('wheel',e=>{
-    if(!snapActive()&&!sliding)return;
+    if(!snapActive()&&glideId===null)return;
     e.preventDefault();
-    if(sliding||Math.abs(e.deltaY)<8)return;
-    slideTo(curSlide()+(e.deltaY>0?1:-1));
+    const d=e.deltaY,now=performance.now();
+    if(Math.abs(d)<8)return;
+    // novo impulso: pausa desde o último, mudança de direção, ou força a crescer;
+    // a cauda de inércia do trackpad (deltas rápidos a decair) é ignorada
+    const impulse=(now-lastWT>60)||(Math.sign(d)!==Math.sign(lastWD))||(Math.abs(d)>Math.abs(lastWD)*1.5);
+    lastWT=now;lastWD=d;
+    if(impulse)slideTo(baseIdx()+(d>0?1:-1));
   },{passive:false});
   links.forEach((l,i)=>l.addEventListener('click',e=>{
-    if(!snapActive())return;
+    if(!snapActive()&&glideId===null)return;
     e.preventDefault();slideTo(i);
   }));
   arrow.addEventListener('click',e=>{
-    if(!snapActive())return;
-    e.preventDefault();slideTo(curSlide()+1);
+    if(!snapActive()&&glideId===null)return;
+    e.preventDefault();slideTo(baseIdx()+1);
   });
   // navegação por teclado
   document.addEventListener('keydown',e=>{
-    if(!snapActive()&&!sliding)return;
-    if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();if(!sliding)slideTo(curSlide()+1)}
-    if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();if(!sliding)slideTo(curSlide()-1)}
+    if(!snapActive()&&glideId===null)return;
+    if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slideTo(baseIdx()+1)}
+    if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slideTo(baseIdx()-1)}
   });
 </script>
 </body>
