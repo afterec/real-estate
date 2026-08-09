@@ -86,22 +86,46 @@
   .capa h1{animation-delay:.45s}
   .capa .rule{animation-delay:.7s}
   .capa .sub{animation-delay:.9s}
-  /* ---------- transição de entrada vinda do home (View Transitions) ---------- */
-  @view-transition{navigation:auto}
-  .capa .bgimg{view-transition-name:vt-hero}
-  ::view-transition-group(vt-hero){animation-duration:.62s;animation-timing-function:cubic-bezier(.22,1,.36,1)}
-  ::view-transition-old(root),::view-transition-new(root){animation-duration:.5s}
-  @media (prefers-reduced-motion:reduce){
-    ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+  /* ---------- ecrã de carregamento + transição de página (véu único) ---------- */
+  #pageveil{position:fixed;inset:0;z-index:400;background:var(--bg);
+    display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .6s ease}
+  #pageveil .pl{display:flex;flex-direction:column;align-items:center;gap:1.3rem;transition:opacity .35s ease}
+  #pageveil .pl img{width:min(180px,50vw);height:auto}
+  #pageveil .plbar{width:140px;height:2px;background:rgba(244,242,238,.14);border-radius:2px;overflow:hidden}
+  #pageveil .plbar i{display:block;width:38%;height:100%;background:var(--red-soft);animation:plslide 1.1s ease-in-out infinite}
+  @keyframes plslide{0%{transform:translateX(-130%)}100%{transform:translateX(360%)}}
+  body.loaded #pageveil{opacity:0;pointer-events:none}
+  body.loaded #pageveil .pl{opacity:0}
+  body.leaving #pageveil{opacity:1;pointer-events:auto;transition:opacity .36s ease}
+  body.leaving #pageveil .pl{opacity:0}
+  @media (prefers-reduced-motion:reduce){#pageveil,#pageveil .pl{transition-duration:.15s}#pageveil .plbar i{animation:none}}
+  /* ---------- botão voltar ao início ---------- */
+  a.homeback{position:fixed;top:2rem;left:2.4rem;z-index:80;display:inline-flex;align-items:center;gap:.45rem;
+    padding:.44rem .8rem .44rem .62rem;border-radius:999px;text-decoration:none;
+    background:rgba(10,10,11,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid rgba(244,242,238,.16);color:var(--ink);
+    font-family:var(--sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;transition:border-color .2s,color .2s}
+  a.homeback:hover{border-color:var(--red-soft);color:var(--red-soft)}
+  a.homeback svg{width:14px;height:14px}
+  .capa .content,.split .text{text-shadow:0 1px 3px rgba(0,0,0,.5),0 3px 20px rgba(0,0,0,.42)}
+  section.slide .num{left:6.2rem}
+  /* rede de segurança: nada empurra a página para os lados no telemóvel */
+  @media(max-width:860px){
+    html,body{overflow-x:hidden}
+    main#deck{overflow-x:hidden}
+    section.slide{overflow-x:clip}
+    .content,.text,p,h1,h2,h3{overflow-wrap:break-word}
+    a.homeback{top:1.1rem;left:1.1rem;padding:.4rem .7rem}
+    section.slide .num{left:4.6rem;top:1.35rem}
   }
   /* ---------- reveal suave do conteúdo ao entrar em cada slide ---------- */
   section.slide:not(.capa)>*:not(.bgimg):not(.veil){
-    opacity:0;transform:translateY(28px);
-    transition:opacity .85s cubic-bezier(.22,1,.36,1),transform .85s cubic-bezier(.22,1,.36,1);
+    opacity:0;transform:translateY(20px);
+    transition:opacity .3s ease,transform .3s ease;
   }
-  section.slide:not(.capa)>*:nth-child(2){transition-delay:.1s}
-  section.slide:not(.capa)>*:nth-child(3){transition-delay:.2s}
-  section.slide:not(.capa)>*:nth-child(n+4){transition-delay:.3s}
+  section.slide:not(.capa)>*:nth-child(2){transition-delay:.04s}
+  section.slide:not(.capa)>*:nth-child(3){transition-delay:.08s}
+  section.slide:not(.capa)>*:nth-child(n+4){transition-delay:.1s}
   section.slide.in:not(.capa)>*:not(.bgimg):not(.veil){opacity:1;transform:none}
   @media (prefers-reduced-motion:reduce){
     section.slide:not(.capa)>*:not(.bgimg):not(.veil){opacity:1;transform:none;transition:none}
@@ -296,7 +320,11 @@
   @media(max-width:860px){
     main{height:auto;overflow-y:visible;scroll-snap-type:none}
     section.slide{height:auto;min-height:0;scroll-snap-align:none;scroll-snap-stop:normal;padding:4.5rem 0 3.5rem}
-    section.slide.hero{height:100vh;height:100svh;min-height:540px;padding:0}
+    section.slide.hero{height:46svh;min-height:300px;max-height:440px;padding:0}
+    section.slide.hero .content{margin-top:0}
+    section.slide.hero .logo{max-width:118px}
+    section.slide.hero h1{font-size:clamp(2rem,11vw,3.2rem)}
+    section.slide.hero .sub{font-size:.82rem}
     /* split: coluna única, media primeiro com altura própria */
     section.slide.split,section.slide.split.rev{display:flex;flex-direction:column;height:auto}
     .split .text{padding:2.2rem 7vw 0}
@@ -332,6 +360,16 @@
 </style>
 </head>
 <body>
+<div id="pageveil" aria-hidden="true">
+  <div class="pl">
+    <img src="img/00-logo-branco.png" alt="">
+    <div class="plbar"><i></i></div>
+  </div>
+</div>
+<a class="homeback" href="https://afterec.com/" aria-label="Voltar ao início">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+  <span>Início</span>
+</a>
 <main id="deck">
 
   <!-- 01 · CAPA -->
@@ -697,18 +735,20 @@
   const obs=new IntersectionObserver(es=>{
     es.forEach(e=>{
       if(e.isIntersecting){
-        e.target.classList.add('in');
         const i=slides.indexOf(e.target);
         links.forEach(l=>l.classList.remove('active'));
         links[i].classList.add('active');
         if(i>=slides.length-1){arrow.classList.add('hidden')}
         else{arrow.classList.remove('hidden');arrow.href='#'+slides[i+1].id}
-      }else{
-        e.target.classList.remove('in');
       }
     });
   },{threshold:.55});
   slides.forEach(s=>obs.observe(s));
+  // reveal do conteúdo: aparece assim que a secção entra e some quando sai por completo (rápido, .3s)
+  const revObs=new IntersectionObserver(es=>{
+    es.forEach(e=>{ e.target.classList.toggle('in', e.isIntersecting); });
+  },{threshold:0});
+  slides.forEach(s=>revObs.observe(s));
   // animação da página no portátil via rAF (o CSS puro falha intermitentemente no Safari iOS)
   const pg=document.querySelector('.laptop .screen .page');
   if(pg){
@@ -777,6 +817,15 @@
     if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slideTo(baseIdx()+1)}
     if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slideTo(baseIdx()-1)}
   });
+</script>
+<script>
+  window.addEventListener('pageshow', function(){ document.body.classList.remove('leaving'); document.body.classList.add('loaded'); });
+  function enterSite(){ document.body.classList.add('loaded'); }
+  if(document.readyState === 'complete'){ enterSite(); } else { window.addEventListener('load', enterSite); }
+  setTimeout(enterSite, 8000);
+  function leaveTo(href){ document.body.classList.add('leaving'); setTimeout(function(){ window.location.href = href; }, 340); }
+  var hb = document.querySelector('a.homeback');
+  if(hb) hb.addEventListener('click', function(ev){ ev.preventDefault(); leaveTo(hb.getAttribute('href')); });
 </script>
 </body>
 </html>
