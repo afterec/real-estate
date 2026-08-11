@@ -12,6 +12,11 @@
 <meta property="og:title" content="AfteREC Real Estate">
 <meta property="og:description" content="Cinema para o imobiliário de luxo: filme de imóvel, drone e FPV, tour 3D e website.">
 <meta property="og:locale" content="pt_PT">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"Início","item":"https://afterec.com/"},
+{"@type":"ListItem","position":2,"name":"Real Estate","item":"https://afterec.com/real-estate/"}]}
+</script>
 <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/favicon.png">
@@ -115,6 +120,17 @@
     font-family:var(--sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;transition:border-color .2s,color .2s}
   a.homeback:hover{border-color:var(--red-soft);color:var(--red-soft)}
   a.homeback svg{width:14px;height:14px}
+  /* breadcrumb: o botão de voltar é o 1.º nível; a página atual não se mostra, só existe para
+     leitores de ecrã e motores de busca, para não alterar o aspeto da página */
+  .crumbs,.crumbs ol{margin:0;padding:0;list-style:none}
+  .crumbs li{display:inline}
+  .vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  /* ligação para os outros serviços, no fim da página */
+  .svcnav{margin-top:2.6rem;display:flex;align-items:center;justify-content:center;gap:.5rem 1rem;flex-wrap:wrap;
+    font-family:var(--sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim)}
+  .svcnav a{color:var(--ink);text-decoration:none;padding-bottom:.15rem;
+    border-bottom:1px solid rgba(244,242,238,.25);transition:color .2s,border-color .2s}
+  .svcnav a:hover{color:var(--red-soft);border-color:var(--red-soft)}
   .capa .content,.split .text{text-shadow:0 1px 3px rgba(0,0,0,.5),0 3px 20px rgba(0,0,0,.42)}
   section.slide .num{left:6.2rem}
   /* rede de segurança: nada empurra a página para os lados no telemóvel */
@@ -374,10 +390,15 @@
     <div class="plbar"><i></i></div>
   </div>
 </div>
-<a class="homeback" href="https://afterec.com/" aria-label="Voltar ao início">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-  <span>Início</span>
-</a>
+<nav class="crumbs" aria-label="Percurso">
+  <ol>
+    <li><a class="homeback" href="https://afterec.com/" aria-label="Voltar ao início">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      <span>Início</span>
+    </a></li>
+    <li aria-current="page"><span class="vh">Real Estate</span></li>
+  </ol>
+</nav>
 <main id="deck">
 
   <!-- 01 · CAPA -->
@@ -719,6 +740,12 @@
         <a href="mailto:before@afterec.com">before@afterec.com</a><br>
         +351 939 842 928
       </div>
+      <nav class="svcnav" aria-label="Outros serviços AfteREC">
+        <span>Outros serviços</span>
+        <a href="https://afterec.com/film/">Film</a>
+        <a href="https://afterec.com/corporate/">Corporate</a>
+        <a href="https://afterec.com/lab/">Lab</a>
+      </nav>
     </div>
   </section>
 
