@@ -10,10 +10,10 @@
     var PAGE='/real-estate/';
     var stored=null; try{stored=localStorage.getItem('afterec_lang')}catch(e){}
     var t=null;
-    if(stored){ if(stored==='en'||stored==='es') t=stored; }
+    if(stored){ if(['en','es','it','de','da','ja','zh','ar'].indexOf(stored)>=0) t=stored; }
     else{
       var l=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase();
-      if(l.indexOf('en')===0) t='en'; else if(l.indexOf('es')===0) t='es';
+      var LNGS=['en','es','it','de','da','ja','zh','ar'];for(var i=0;i<LNGS.length;i++){if(l.indexOf(LNGS[i])===0){t=LNGS[i];break}}
       try{localStorage.setItem('afterec_lang', t||'pt')}catch(e){}
     }
     if(t) location.replace('/'+t+PAGE);
@@ -27,6 +27,12 @@
 <link rel="alternate" hreflang="pt-PT" href="https://afterec.com/real-estate/">
 <link rel="alternate" hreflang="en" href="https://afterec.com/en/real-estate/">
 <link rel="alternate" hreflang="es" href="https://afterec.com/es/real-estate/">
+<link rel="alternate" hreflang="it" href="https://afterec.com/it/real-estate/">
+<link rel="alternate" hreflang="de" href="https://afterec.com/de/real-estate/">
+<link rel="alternate" hreflang="da" href="https://afterec.com/da/real-estate/">
+<link rel="alternate" hreflang="ja" href="https://afterec.com/ja/real-estate/">
+<link rel="alternate" hreflang="zh" href="https://afterec.com/zh/real-estate/">
+<link rel="alternate" hreflang="ar" href="https://afterec.com/ar/real-estate/">
 <link rel="alternate" hreflang="x-default" href="https://afterec.com/real-estate/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AfteREC">
@@ -452,7 +458,13 @@
       <button data-l="pt" class="on">Português</button>
       <button data-l="en">English</button>
       <button data-l="es">Español</button>
-    </div>
+      <button data-l="it">Italiano</button>
+      <button data-l="de">Deutsch</button>
+      <button data-l="da">Dansk</button>
+      <button data-l="ja">日本語</button>
+      <button data-l="zh">中文</button>
+      <button data-l="ar">العربية</button>
+  </div>
   </div>
 </div>
 <main id="deck">
@@ -923,7 +935,7 @@
     var btn = sw.querySelector('.langbtn');
     btn.addEventListener('click', function(e){ e.stopPropagation(); sw.classList.toggle('open'); });
     document.addEventListener('click', function(){ sw.classList.remove('open'); });
-    var LANG_URLS = {pt:'/real-estate/', en:'/en/real-estate/', es:'/es/real-estate/'};
+    var LANG_URLS = {pt:'/real-estate/', en:'/en/real-estate/', es:'/es/real-estate/', it:'/it/real-estate/', de:'/de/real-estate/', da:'/da/real-estate/', ja:'/ja/real-estate/', zh:'/zh/real-estate/', ar:'/ar/real-estate/'};
     sw.querySelectorAll('.langmenu button').forEach(function(b){
       b.addEventListener('click', function(){
         var l = b.dataset.l;
