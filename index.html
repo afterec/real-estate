@@ -366,10 +366,11 @@
   /* ---------- seta de continuar ---------- */
   a.downarrow{
     position:fixed;bottom:1.6rem;left:50%;transform:translateX(-50%);
-    z-index:60;width:44px;height:44px;display:flex;align-items:center;justify-content:center;
-    color:var(--ink);opacity:.85;transition:opacity .3s,color .2s;
+    z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;
+    color:var(--ink);opacity:.85;transition:opacity .3s,color .2s;text-decoration:none;
     animation:arrowfloat 2.2s ease-in-out infinite;
   }
+  a.downarrow .dlabel{font-family:var(--sans);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.6)}
   a.downarrow:hover{color:var(--red-soft)}
   a.downarrow.hidden{opacity:0;pointer-events:none}
   a.downarrow svg{width:26px;height:26px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))}
@@ -423,7 +424,7 @@
     .capa .sub .subq{display:block}
   }
   /* ---------- seletor de idioma (igual ao do home) ---------- */
-  .langsw{position:fixed;top:1.4rem;right:1.6rem;z-index:60;font-family:var(--sans)}
+  .langsw{position:relative;font-family:var(--sans)}
   .langbtn{display:flex;align-items:center;gap:.4rem;background:rgba(10,10,11,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
     border:1px solid rgba(244,242,238,.16);color:var(--ink);border-radius:999px;padding:.4rem .7rem;
     font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:border-color .2s,color .2s}
@@ -437,12 +438,49 @@
     font-size:.82rem;border-radius:8px;cursor:pointer;transition:background .18s,color .18s;font-family:inherit}
   .langmenu button:hover{background:rgba(249,0,0,.12);color:var(--red-soft)}
   .langmenu button.on{color:var(--red-soft)}
-  /* wrapper do canto sup. esq.: botão voltar + seletor de idioma */
-  .topctl{position:fixed;top:2rem;left:2.4rem;z-index:80;display:flex;align-items:center;gap:.6rem}
-  .topctl a.homeback{position:static;top:auto;left:auto}
-  .topctl .langsw{position:static}
-  .topctl .langmenu{left:0;right:auto}
-  @media(max-width:860px){.topctl{top:1.1rem;left:1.1rem}}
+  /* ---------- header dos serviços (Founder 2026-08-23): escondido na capa, aparece ao
+     descer — Home à esquerda (casinha vermelha), voltar ao topo ao centro, idioma à direita.
+     Substitui os botões fixos que ficavam por cima do número/título das secções. ---------- */
+  .svchead{position:fixed;top:0;left:0;right:0;z-index:90;display:flex;align-items:center;justify-content:space-between;
+    gap:1rem;padding:.55rem 1.6rem;background:rgba(10,10,11,.78);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(244,242,238,.08);font-family:var(--sans);
+    transform:translateY(-102%);transition:transform .35s ease}
+  body.desceu .svchead{transform:none}
+  .svchead .crumbs ol{list-style:none;display:flex;margin:0;padding:0}
+  .svchead a.homeback{position:static;display:inline-flex;align-items:center;gap:.5rem;background:none;border:none;padding:.3rem 0;
+    color:var(--ink);text-decoration:none;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase}
+  .svchead a.homeback:hover{color:var(--red-soft)}
+  .svchead a.homeback svg{width:16px;height:16px;color:var(--red-soft)}
+  .hb-top{position:absolute;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:.5rem;
+    background:none;border:none;cursor:pointer;color:var(--ink-dim);font-family:var(--sans);
+    font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:.3rem .2rem;transition:color .2s}
+  .hb-top:hover{color:var(--red-soft)}
+  .hb-top svg{width:14px;height:14px}
+  /* bandeiras em círculo (CSS puro: os emojis de bandeira não aparecem no Windows) */
+  .flg{width:15px;height:15px;border-radius:50%;flex:none;display:inline-block;position:relative;overflow:hidden;
+    border:1px solid rgba(244,242,238,.28);background:#555}
+  .flg.pt{background:linear-gradient(90deg,#046a38 0 40%,#da291c 40%)}
+  .flg.en{background:linear-gradient(#fff 0 0) center/100% 30% no-repeat,linear-gradient(#fff 0 0) center/30% 100% no-repeat,#012169}
+  .flg.en::after{content:'';position:absolute;inset:0;background:linear-gradient(#C8102E 0 0) center/100% 14% no-repeat,linear-gradient(#C8102E 0 0) center/14% 100% no-repeat}
+  .flg.es{background:linear-gradient(180deg,#AA151B 0 27%,#F1BF00 27% 73%,#AA151B 73%)}
+  .flg.it{background:linear-gradient(90deg,#008C45 0 33%,#f4f5f0 33% 67%,#CD212A 67%)}
+  .flg.de{background:linear-gradient(180deg,#111 0 33%,#DD0000 33% 67%,#FFCE00 67%)}
+  .flg.da{background:linear-gradient(#fff 0 0) center/100% 20% no-repeat,linear-gradient(#fff 0 0) 30% 0/20% 100% no-repeat,#C8102E}
+  .flg.ja{background:radial-gradient(circle,#BC002D 0 33%,#fff 34%)}
+  .flg.zh{background:radial-gradient(circle at 30% 32%,#FFDE00 0 16%,transparent 17%),#DE2910}
+  .flg.ar{background:linear-gradient(180deg,#165d31 0 58%,#f4f5f0 58% 70%,#165d31 70%)}
+  .langmenu button{display:flex;align-items:center;gap:.55rem}
+  .langbtn .flg{width:14px;height:14px}
+  @media(max-width:860px){
+    .svchead{padding:.5rem .9rem}
+    .hb-top span{display:none}
+    /* no telemóvel a capa cresce com o conteúdo: o deco grande + botão têm de caber */
+    section.slide.hero.capa{height:auto;min-height:46svh;max-height:none;padding:4.2rem 0 2.6rem}
+    .capa .content{margin-top:1.2rem}
+    .capa .btn{margin-top:1.4rem;padding:.85rem 1.8rem}
+  }
+  /* botão de reunião na capa */
+  .capa .btn{margin-top:2rem}
 </style>
 </head>
 <body>
@@ -452,34 +490,38 @@
     <div class="plbar"><i></i></div>
   </div>
 </div>
-<div class="topctl">
+<header class="svchead" id="svchead">
   <nav class="crumbs" aria-label="Percurso">
     <ol>
-      <li><a class="homeback" href="https://afterec.com/" aria-label="Voltar ao início">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-        <span>Início</span>
+      <li><a class="homeback" href="https://afterec.com/" title="Ir para a página inicial da AfteREC" aria-label="Ir para a página inicial da AfteREC">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>
+        <span>Home</span>
       </a></li>
       <li aria-current="page"><span class="vh">Real Estate</span></li>
     </ol>
   </nav>
+  <button class="hb-top" id="hb-top" title="Voltar ao topo da página" aria-label="Voltar ao topo da página">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+    <span>Voltar ao topo</span>
+  </button>
   <div class="langsw" id="langsw">
     <button class="langbtn" aria-haspopup="true" aria-expanded="false" aria-label="Escolher idioma">
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg>
+      <span class="flg pt" aria-hidden="true"></span>
       <span class="langcur">PT</span>
     </button>
     <div class="langmenu" role="menu">
-      <button data-l="pt" class="on">Português</button>
-      <button data-l="en">English</button>
-      <button data-l="es">Español</button>
-      <button data-l="it">Italiano</button>
-      <button data-l="de">Deutsch</button>
-      <button data-l="da">Dansk</button>
-      <button data-l="ja">日本語</button>
-      <button data-l="zh">中文</button>
-      <button data-l="ar">العربية</button>
+      <button data-l="pt" class="on"><span class="flg pt" aria-hidden="true"></span>Português</button>
+      <button data-l="en"><span class="flg en" aria-hidden="true"></span>English</button>
+      <button data-l="es"><span class="flg es" aria-hidden="true"></span>Español</button>
+      <button data-l="it"><span class="flg it" aria-hidden="true"></span>Italiano</button>
+      <button data-l="de"><span class="flg de" aria-hidden="true"></span>Deutsch</button>
+      <button data-l="da"><span class="flg da" aria-hidden="true"></span>Dansk</button>
+      <button data-l="ja"><span class="flg ja" aria-hidden="true"></span>日本語</button>
+      <button data-l="zh"><span class="flg zh" aria-hidden="true"></span>中文</button>
+      <button data-l="ar"><span class="flg ar" aria-hidden="true"></span>العربية</button>
   </div>
   </div>
-</div>
+</header>
 <main id="deck">
 
   <!-- 01 · CAPA -->
@@ -495,6 +537,7 @@
       <h1>Real Estate</h1>
       <div class="rule"></div>
       <p class="sub">Um serviço de produção audiovisual <span class="subq">para imobiliário de luxo.</span></p>
+      <a class="btn" href="https://cal.com/afterec/discoverycall" target="_blank" rel="noopener">Vamos conversar</a>
     </div>
   </section>
 
@@ -884,6 +927,7 @@
 <nav class="dots" id="dots"></nav>
 
 <a class="downarrow" id="downarrow" href="#s2" title="Continuar">
+  <span class="dlabel">Saber mais</span>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
 </a>
 
@@ -973,6 +1017,13 @@
       if(bd>2)slideTo(best);
     },1000);
   },{passive:true});
+  // header aparece ao descer (na capa fica escondido); "voltar ao topo" ao centro
+  const desceu=()=>{const y=slidesMode()?mainEl.scrollTop:window.scrollY;document.body.classList.toggle('desceu',y>innerHeight*.5)};
+  mainEl.addEventListener('scroll',desceu,{passive:true});
+  window.addEventListener('scroll',desceu,{passive:true});
+  document.getElementById('hb-top').addEventListener('click',()=>{
+    if(slidesMode())slideTo(0);else window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});
+  });
   links.forEach((l,i)=>l.addEventListener('click',e=>{
     if(!slidesMode())return;
     e.preventDefault();slideTo(i);
