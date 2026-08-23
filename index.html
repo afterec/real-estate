@@ -94,6 +94,11 @@
     color:var(--ink-dim);max-width:36em;
   }
   p.body strong{color:var(--ink);font-weight:400}
+  /* listas de leitura rápida: a informação dos blocos longos partida em pontos varríveis */
+  ul.blist{list-style:none;margin:1.05rem 0 0;display:flex;flex-direction:column;gap:.5rem;max-width:36em}
+  ul.blist li{font-size:clamp(.88rem,1.1vw,1rem);line-height:1.6;color:var(--ink-dim);padding-left:1.05rem;position:relative}
+  ul.blist li:before{content:'·';position:absolute;left:0;color:var(--red-soft);font-weight:700}
+  ul.blist strong{color:var(--ink);font-weight:400}
   .num{
     position:absolute;top:2.4rem;left:3rem;z-index:5;
     font-family:var(--sans);font-size:.7rem;letter-spacing:.25em;
@@ -487,7 +492,14 @@
     <div class="content">
       <div class="kicker">Quem somos</div>
       <h2>Não fazemos «um vídeo».<br><span class="oneline">Construímos a <em>imagem</em> de um imóvel.</span></h2>
-      <p class="body">A AfteREC é uma <strong>produtora de cinema</strong>. Produzimos conteúdos que <strong>prendem a atenção do espectador</strong>: através da narrativa, da escolha de planos, da iluminação e da decoração. Para cada imóvel, mostramos o melhor que a casa tem, a sua unicidade, numa peça visual que faz querer conhecer mais. Procuramos trabalhar com <strong>imóveis únicos e exclusivos</strong>, principalmente no setor de luxo, e estes conteúdos <strong>reforçam a marca pessoal do agente e da empresa</strong> associada à venda do imóvel.<br><br>Coordenamos os melhores profissionais para cada conteúdo e garantimos que tudo o que produzimos mantém um nível de qualidade elevado. O que pode esperar não é apenas a entrega de um material: é a <strong>gestão de todos os conteúdos de marketing de um imóvel</strong>, de um empreendimento ou de um projeto, especialmente em conteúdos cinematográficos e muito cuidados.</p>
+      <p class="body">A AfteREC é uma <strong>produtora de cinema</strong>. Para cada imóvel, mostramos o melhor que a casa tem, a sua unicidade, numa peça visual que faz querer conhecer mais.</p>
+      <ul class="blist">
+        <li>Conteúdos que <strong>prendem a atenção</strong>: narrativa, escolha de planos, iluminação e decoração</li>
+        <li><strong>Imóveis únicos e exclusivos</strong>, principalmente no setor de luxo</li>
+        <li>Reforçam a <strong>marca pessoal do agente</strong> e da empresa associada à venda</li>
+        <li>Coordenamos os melhores profissionais para cada conteúdo, com <strong>qualidade elevada garantida</strong></li>
+      </ul>
+      <p class="body" style="margin-top:1.1rem">Mais do que entregar um material: a <strong>gestão de todos os conteúdos de marketing</strong> de um imóvel, de um empreendimento ou de um projeto, em peças cinematográficas e muito cuidadas.</p>
     </div>
   </section>
 
@@ -526,7 +538,14 @@
     <div class="text">
       <div class="kicker">Porque é que isto importa</div>
       <h2>No luxo, o problema não é divulgar. É <em>sustentar o valor</em>.</h2>
-      <p class="body">Hoje qualquer pessoa faz um vídeo, mas poucos criam conteúdo com <strong>linguagem de cinema que ao mesmo tempo funciona online</strong>. É isso que muda o posicionamento do imóvel e de quem o comercializa: acelera a venda, reduz curiosos, melhora a qualidade das leads e faz o comprador chegar à visita já a entender a casa. E nós garantimos que tudo isto acontece.<br><br>Quanto melhor e mais apelativo é o conteúdo, mais contactos gera e <strong>menos tempo o imóvel fica no mercado</strong>. E menos tempo no mercado significa menos custos: manter um imóvel de luxo pode custar 5 a 10 mil euros por mês, entre jardins, eletricidade, água e o essencial para o manter impecável. Vender mais depressa é passar esses custos ao comprador mais cedo.<br><br>E para quem comercializa há um segundo efeito: <strong>73% dos proprietários preferem confiar a venda a quem apresenta vídeo</strong> — o mesmo conteúdo que vende este imóvel ganha as próximas angariações.</p>
+      <p class="body">Hoje qualquer pessoa faz um vídeo. Poucos criam conteúdo com <strong>linguagem de cinema que funciona online</strong>: é isso que muda o posicionamento do imóvel e de quem o comercializa.</p>
+      <ul class="blist">
+        <li><strong>Acelera a venda</strong> e reduz visitas de curiosos</li>
+        <li>O comprador chega à visita <strong>já a entender a casa</strong></li>
+        <li>Menos tempo no mercado, menos custos: manter um imóvel de luxo custa <strong>5 a 10 mil € por mês</strong></li>
+        <li><strong>73% dos proprietários</strong> preferem confiar a venda a quem apresenta vídeo: o mesmo conteúdo ganha as próximas angariações</li>
+      </ul>
+      <p class="body" style="margin-top:1.1rem">E nós garantimos que tudo isto acontece.</p>
     </div>
   </section>
 
@@ -603,7 +622,13 @@
     <div class="text">
       <div class="kicker">Vídeo cinematográfico</div>
       <h2>Não é um anúncio. É um <em>filme</em>.</h2>
-      <p class="body">Um vídeo mais longo, produzido com as exigências de cinema: equipa com direção de fotografia, iluminação e direção de arte, e pós-produção com correção de cor. O <strong>guião é a peça fundamental</strong>: é a narrativa que prende quem vê, e pode ser séria, cómica ou transmitir um estilo de vida em que o comprador se revê e que o faz querer a casa. É a peça que cria emoção e apresenta o imóvel como um produto premium e único.<br><br>Ideal para imóveis e projetos verdadeiramente únicos, que merecem chegar a um público universal e atraí-lo à primeira vista. E diz muito sobre quem o encomenda: uma agência ou marca que apresenta um vídeo destes mostra que se preocupa com a estética e com a narrativa, e divulga o seu portfólio ao mais alto nível.</p>
+      <p class="body">Um vídeo mais longo, produzido com as exigências de cinema: direção de fotografia, iluminação, direção de arte e pós-produção com correção de cor.</p>
+      <ul class="blist">
+        <li>O <strong>guião é a peça fundamental</strong>: séria, cómica ou um estilo de vida em que o comprador se revê</li>
+        <li>Cria emoção e apresenta o imóvel como <strong>produto premium e único</strong></li>
+        <li>Para imóveis verdadeiramente únicos, que merecem chegar a um <strong>público universal</strong></li>
+        <li>E diz muito sobre quem o encomenda: estética, narrativa e um <strong>portfólio ao mais alto nível</strong></li>
+      </ul>
     </div>
     <div class="media" style="background-image:url('img/07-cinema.jpg');background-size:cover;background-position:center">
       <!-- Vídeo em loop, sem ligação externa: colocar o ficheiro em video/07-cinema.mp4 -->
@@ -628,7 +653,13 @@
     <div class="text">
       <div class="kicker">Vídeo-tour guiado</div>
       <h2>Para quem quer conhecer o imóvel <em>a fundo</em>.</h2>
-      <p class="body">Um formato longo, que pode chegar aos 30 minutos consoante o tamanho do imóvel, dedicado ao <strong>YouTube</strong>. Percorre a casa divisão a divisão e conta a sua história a quem realmente quer conhecer o imóvel antes de decidir um investimento desta dimensão.<br><br>É um vídeo pensado para <strong>alcance orgânico</strong>: em média, um vídeo destes ronda o meio milhão de visualizações, e imóveis verdadeiramente excecionais chegam às dezenas de milhões de visualizações, consoante a exclusividade do imóvel.<br><br>O formato tem sido fortemente explorado nos <strong>Estados Unidos nos últimos cinco anos</strong>, com resultados à vista nas visualizações e nas vendas fechadas através destes conteúdos. Em Portugal quase nenhuma empresa o faz, e é também por isso que nos destacamos ao trazê-lo.</p>
+      <p class="body">Um formato longo, até 30 minutos consoante o imóvel, dedicado ao <strong>YouTube</strong>: percorre a casa divisão a divisão e conta a sua história a quem quer mesmo conhecer o imóvel antes de um investimento desta dimensão.</p>
+      <ul class="blist">
+        <li>Pensado para <strong>alcance orgânico</strong>: em média ronda o meio milhão de visualizações</li>
+        <li>Imóveis excecionais chegam às <strong>dezenas de milhões</strong>, consoante a exclusividade</li>
+        <li>Formato forte nos <strong>EUA nos últimos cinco anos</strong>, com vendas fechadas através destes conteúdos</li>
+        <li>Em Portugal quase ninguém o faz: é também por isso que <strong>nos destacamos</strong> ao trazê-lo</li>
+      </ul>
     </div>
   </section>
 
@@ -639,7 +670,13 @@
     <div class="text">
       <div class="kicker">Conteúdos para redes sociais</div>
       <h2>Do ar, e <em>ao longo do tempo</em>.</h2>
-      <p class="body">Vídeos curtos com edições dinâmicas e com movimento, e fotografias do imóvel, feitos para prender e gerar mais alcance. A <strong>captação aérea com drone FPV</strong> percorre todas as divisões numa trajetória contínua e cinematográfica, mostra a relação da casa com o terreno e a envolvente, e revela todo o potencial do imóvel da forma mais rápida, exatamente o que o espectador das redes procura: perceber a casa em segundos e ficar preso ao vídeo desde o primeiro momento.<br><br>Para imóveis em construção, um <strong>time-lapse mensal</strong> documenta a obra do primeiro dia à entrega: ideal para empreendimentos e promotoras. E quando o projeto o justifica, criamos conteúdos com <strong>inteligência artificial</strong>, que também usamos na edição de alguns conteúdos para redes.</p>
+      <p class="body">Vídeos curtos com edições dinâmicas e com movimento, e fotografias do imóvel, feitos para prender e gerar mais alcance.</p>
+      <ul class="blist">
+        <li>A <strong>captação aérea com drone FPV</strong> percorre as divisões numa trajetória contínua e cinematográfica</li>
+        <li>Mostra a relação da casa com o terreno e revela o potencial <strong>em segundos</strong>: o que o espectador das redes procura</li>
+        <li>Em construção, um <strong>time-lapse mensal</strong> documenta a obra do primeiro dia à entrega, ideal para promotoras</li>
+        <li>Quando o projeto o justifica, conteúdos e edição com <strong>inteligência artificial</strong></li>
+      </ul>
     </div>
     <div class="media">
       <div class="media4">
@@ -674,7 +711,12 @@
     <div class="text">
       <div class="kicker">Renders e conteúdo 3D</div>
       <h2>O imóvel, <em>antes de existir</em>.</h2>
-      <p class="body">Renders e vídeo 3D para imóveis que ainda não existem: terrenos com projeto aprovado, empreendimentos em planta ou obras por terminar. Mostram todo o potencial do espaço com qualidade próxima do resultado final e permitem vender em pré-venda, muito antes de a obra estar pronta.<br><br>A mesma equipa faz <strong>home staging virtual</strong> em imóveis vazios: mobilamos e decoramos digitalmente cada espaço, para o comprador ver uma casa habitada em vez de salas vazias — a alternativa rápida ao staging físico.<br><br>Excelente para promotores, agentes e proprietários de terrenos que precisam de comunicar o que ainda só existe no papel.</p>
+      <p class="body">Renders e vídeo 3D para imóveis que ainda não existem: terrenos com projeto aprovado, empreendimentos em planta, obras por terminar.</p>
+      <ul class="blist">
+        <li>Qualidade próxima do resultado final: permite <strong>vender em pré-venda</strong>, antes de a obra estar pronta</li>
+        <li><strong>Home staging virtual</strong> em imóveis vazios: mobilamos e decoramos digitalmente cada espaço, a alternativa rápida ao staging físico</li>
+        <li>Para promotores, agentes e proprietários que precisam de comunicar <strong>o que ainda só existe no papel</strong></li>
+      </ul>
     </div>
     <div class="media">
       <div class="media3">
@@ -741,7 +783,14 @@
         <div class="step"><h4>Entrega</h4><p>Todos os formatos, por canal, com instruções de uso.</p></div>
       </div>
       <span class="badge">O ciclo de 10 a 12 dias<small>desde o arranque da pré-produção</small></span>
-      <p class="body" style="margin-top:2rem">O ciclo de produção <strong>dura 10 a 12 dias</strong>, contados a partir do momento em que a pré-produção arranca, com a proposta aceite e adjudicada e o calendário fechado. A primeira reunião serve para percebermos o que o imóvel vai precisar; logo a seguir fazemos o alinhamento, com uma ou mais <strong>reuniões de briefing</strong> para garantir que o material vai ser feito exatamente como é necessário, dentro de um calendário provisório que apresentamos. É nesse alinhamento que se escolhem os conteúdos a gravar e os profissionais para cada peça. Se o imóvel estiver vazio ou pouco preparado, tratamos também do <strong>home staging</strong> — real, com os nossos parceiros de decoração, ou virtual, nos conteúdos 3D: uma casa preparada filma melhor, vende melhor e tende a vender por mais. Basta falar diretamente connosco e nós tratamos do que é necessário.</p>
+      <p class="body" style="margin-top:2rem">O ciclo de produção <strong>dura 10 a 12 dias</strong>, contados do arranque da pré-produção, com a proposta adjudicada e o calendário fechado.</p>
+      <ul class="blist">
+        <li>Primeira reunião: perceber <strong>o que o imóvel vai precisar</strong></li>
+        <li>Uma ou mais <strong>reuniões de briefing</strong>: os conteúdos a gravar, os profissionais para cada peça e o calendário provisório</li>
+        <li>Imóvel vazio ou pouco preparado? Tratamos do <strong>home staging</strong>: real, com os nossos parceiros de decoração, ou virtual, nos conteúdos 3D</li>
+        <li>Uma casa preparada <strong>filma melhor, vende melhor</strong> e tende a vender por mais</li>
+        <li>Basta falar diretamente connosco: <strong>nós tratamos do que é necessário</strong></li>
+      </ul>
     </div>
   </section>
 
