@@ -534,6 +534,18 @@
   @keyframes decoanda{from{transform:translateX(-46vw)}to{transform:none}}
   @keyframes decopassos{0%{transform:translateY(0) rotate(0)}10%{transform:translateY(-7px) rotate(2.4deg)}20%{transform:translateY(0) rotate(0)}30%{transform:translateY(-6px) rotate(-2.2deg)}40%{transform:translateY(0) rotate(0)}52%{transform:translateY(-5px) rotate(1.8deg)}64%{transform:translateY(0) rotate(0)}76%{transform:translateY(-3px) rotate(-1.2deg)}88%{transform:translateY(-1px) rotate(.5deg)}100%{transform:translateY(0) rotate(0)}}
   @media (prefers-reduced-motion:reduce){.capa .decowrap{transform:none}body.loaded .capa .decowrap,body.loaded .capa .decowrap .deco{animation:none}}
+  /* entrada REAL dos bonecos (clip gerado, invertido): o vídeo anda com pernas e braços,
+     e no fim faz crossfade para o PNG exato; sem vídeo, fica a entrada a deslizar.
+     O vídeo vive ao nível da SECÇÃO (fora do .content) para o blend "screen" apagar o
+     fundo preto contra o vídeo da capa; o JS alinha-o sobre o boneco. */
+  .capa .decovid{position:absolute;z-index:2;transform:translate(-50%,-52%);
+    mix-blend-mode:screen;pointer-events:none;opacity:0;transition:opacity .3s ease;
+    filter:contrast(1.45) brightness(.94)}   /* esmaga o quase-preto do clip para o blend o apagar */
+  .capa .decowrap.com-video{animation:none!important;transform:none!important}
+  .capa .decowrap.com-video .deco{opacity:0;transition:opacity .3s ease;animation:none!important}
+  .capa.video-a-andar .decovid{opacity:1}
+  .capa.video-acabou .decovid{opacity:0}
+  .capa.video-acabou .decowrap .deco{opacity:1}
   /* com o header visível, o número da secção e o "voltar" descem para não ficarem tapados */
   section.slide .num,section.slide a.back{transition:top .35s ease}
   body.desceu section.slide .num{top:calc(2.4rem + 46px)}
@@ -594,6 +606,7 @@
       <source src="video/00-capa.mp4" type="video/mp4">
     </video>
     <div class="veil"></div>
+    <video class="decovid" src="video/00-deco.mp4" muted playsinline preload="auto"></video>
     <div class="content">
       <img class="logo" src="img/00-logo-branco.png" alt="AfteREC">
       <span class="decowrap"><img class="deco" src="img/00-deco.png" alt=""></span>
@@ -1113,6 +1126,31 @@
   function leaveTo(href){ document.body.classList.add('leaving'); setTimeout(function(){ window.location.href = href; }, 340); }
   var hb = document.querySelector('a.homeback');
   if(hb) hb.addEventListener('click', function(ev){ ev.preventDefault(); leaveTo(hb.getAttribute('href')); });
+  // bonecos: o vídeo entra a andar quando o véu levanta; no fim, crossfade para o PNG
+  (function(){
+    var capa = document.querySelector('section.capa');
+    var dw = document.querySelector('.capa .decowrap'), dv = document.querySelector('.capa .decovid');
+    if(!capa || !dw || !dv) return;
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches){ dv.remove(); return; }
+    function alinhar(){
+      var img = dw.querySelector('.deco');
+      var r = img.getBoundingClientRect(), s = capa.getBoundingClientRect();
+      dv.style.width = (r.width * 2.6) + 'px';
+      dv.style.left = (r.left - s.left + r.width / 2) + 'px';
+      dv.style.top = (r.top - s.top + r.height / 2) + 'px';
+    }
+    window.addEventListener('resize', alinhar);
+    var iv = setInterval(function(){
+      if(document.body.classList.contains('loaded')){
+        clearInterval(iv);
+        dw.classList.add('com-video');
+        alinhar();
+        dv.play().then(function(){ capa.classList.add('video-a-andar'); })
+          .catch(function(){ dw.classList.remove('com-video'); dv.remove(); });
+      }
+    }, 120);
+    dv.addEventListener('ended', function(){ capa.classList.add('video-acabou'); });
+  })();
   // ---------- seletor de idioma ----------
   (function(){
     var sw = document.getElementById('langsw'); if(!sw) return;
