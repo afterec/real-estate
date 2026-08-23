@@ -160,14 +160,16 @@
   #pageveil .plogo{position:relative;width:min(180px,50vw);aspect-ratio:2000/700}
   #pageveil .plogo .seg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
     animation:segvem 1.1s cubic-bezier(.16,1,.3,1) both}
-  #pageveil .plogo .s1{clip-path:inset(0 86.55% 0 0);--tx:-60vw;--ty:0vh}
-  #pageveil .plogo .s2{clip-path:inset(0 73.1% 0 13.45%);--tx:0vw;--ty:-60vh;animation-delay:.05s}
-  #pageveil .plogo .s3{clip-path:inset(0 59.65% 0 26.9%);--tx:60vw;--ty:0vh;animation-delay:.1s}
-  #pageveil .plogo .s4{clip-path:inset(0 46.2% 0 40.35%);--tx:0vw;--ty:60vh;animation-delay:.15s}
-  #pageveil .plogo .s5{clip-path:inset(0 32.75% 0 53.8%);--tx:-45vw;--ty:-45vh;animation-delay:.2s}
-  #pageveil .plogo .s6{clip-path:inset(0 19.3% 0 67.25%);--tx:45vw;--ty:45vh;animation-delay:.25s}
-  #pageveil .plogo .s7{clip-path:inset(0 5.85% 0 80.7%);--tx:0vw;--ty:-60vh;animation-delay:.12s}
-  #pageveil .plogo .sdot{clip-path:inset(19% 0 63% 93.8%);animation:dotpisca .6s steps(1,end) 1.15s both}
+  /* cortes nas junções reais entre letras (fronteiras medidas no PNG) e sequência
+     esquerda→direita, como se a palavra fosse escrita (Founder 2026-08-23) */
+  #pageveil .plogo .s1{clip-path:inset(0 85.05% 0 0);--tx:-60vw;--ty:0vh}
+  #pageveil .plogo .s2{clip-path:inset(0 75.35% 0 14.95%);--tx:0vw;--ty:-60vh;animation-delay:.09s}
+  #pageveil .plogo .s3{clip-path:inset(0 64.25% 0 24.65%);--tx:60vw;--ty:0vh;animation-delay:.18s}
+  #pageveil .plogo .s4{clip-path:inset(0 53.55% 0 35.75%);--tx:0vw;--ty:60vh;animation-delay:.27s}
+  #pageveil .plogo .s5{clip-path:inset(0 37.95% 0 46.45%);--tx:-45vw;--ty:-45vh;animation-delay:.36s}
+  #pageveil .plogo .s6{clip-path:inset(0 25.15% 0 62.05%);--tx:45vw;--ty:45vh;animation-delay:.45s}
+  #pageveil .plogo .s7{clip-path:inset(0 7.3% 0 74.85%);--tx:0vw;--ty:-60vh;animation-delay:.54s}
+  #pageveil .plogo .sdot{clip-path:inset(19% 0 63% 92.7%);animation:dotpisca .58s steps(1,end) 1.2s both}
   @keyframes segvem{from{transform:translate(var(--tx),var(--ty))}to{transform:none}}
   @keyframes dotpisca{0%{opacity:0}17%{opacity:1}34%{opacity:0}50%{opacity:1}67%{opacity:0}84%{opacity:1}100%{opacity:1}}
   @media (prefers-reduced-motion:reduce){#pageveil .plogo .seg{animation:none}}
