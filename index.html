@@ -72,7 +72,9 @@
   }
   main{
     height:100vh;overflow-y:scroll;
-    scroll-snap-type:y mandatory;
+    /* sem snap nativo: o scroll do rato é livre; o reenquadre à secção é feito em JS,
+       1s depois de o utilizador parar (pedido do Founder 2026-08-23) */
+    scroll-snap-type:none;
   }
   section.slide{
     height:100vh;width:100%;
@@ -99,6 +101,8 @@
   ul.blist li{font-size:clamp(.88rem,1.1vw,1rem);line-height:1.6;color:var(--ink-dim);padding-left:1.05rem;position:relative}
   ul.blist li:before{content:'·';position:absolute;left:0;color:var(--red-soft);font-weight:700}
   ul.blist strong{color:var(--ink);font-weight:400}
+  /* nas secções centradas (statement) a lista fica alinhada à esquerda dentro de um bloco centrado */
+  .statement ul.blist{margin-left:auto;margin-right:auto;text-align:left;max-width:34em}
   .num{
     position:absolute;top:2.4rem;left:3rem;z-index:5;
     font-family:var(--sans);font-size:.7rem;letter-spacing:.25em;
@@ -126,6 +130,10 @@
   section.slide.capa{align-items:flex-start}
   .capa .veil{background:linear-gradient(90deg,rgba(22,22,24,.78) 0%,rgba(22,22,24,.38) 42%,rgba(22,22,24,.04) 72%),linear-gradient(180deg,transparent 55%,rgba(22,22,24,.82) 100%)}
   .capa .content{width:100%;max-width:1280px;padding:0 7vw;text-align:left;margin-top:9vh}
+  /* capa com o vídeo do serviço (o mesmo da home) + boneco deco em grande */
+  .capa .bgvideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .capa .deco{display:block;height:clamp(150px,24vh,280px);width:auto;margin:0 0 1.4rem;filter:drop-shadow(0 8px 26px rgba(0,0,0,.5))}
+  @media(max-width:860px){.capa .deco{height:clamp(76px,12svh,110px);margin-bottom:.9rem}}
   @keyframes fadeup{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
   .capa .logo,.capa h1,.capa .rule,.capa .sub{opacity:0;animation:fadeup .9s ease forwards}
   .capa .logo{animation-delay:.15s}
@@ -477,9 +485,13 @@
   <!-- 01 · CAPA -->
   <section class="slide hero capa" id="s1">
     <div class="bgimg" style="background-image:url('img/01-capa.jpg')"></div>
+    <video class="bgvideo" autoplay muted loop playsinline poster="img/01-capa.jpg">
+      <source src="video/00-capa.mp4" type="video/mp4">
+    </video>
     <div class="veil"></div>
     <div class="content">
       <img class="logo" src="img/00-logo-branco.png" alt="AfteREC">
+      <img class="deco" src="img/00-deco.png" alt="">
       <h1>Real Estate</h1>
       <div class="rule"></div>
       <p class="sub">Um serviço de produção audiovisual <span class="subq">para imobiliário de luxo.</span></p>
@@ -917,13 +929,13 @@
       requestAnimationFrame(tick);
     })(t0);
   }
-  // transição suave entre slides (wheel + teclado + dots), estilo apresentação
-  // Perseguição exponencial retargetável: cada impulso soma ao destino, por isso
-  // vários scrolls seguidos descem vários slides num movimento único e contínuo.
+  // Scroll do rato LIVRE (nativo, nunca intercetado); 1s depois de parar, a página
+  // reenquadra sozinha na secção mais próxima (pedido do Founder 2026-08-23).
+  // O slideTo com perseguição exponencial mantém-se para dots, seta e teclado.
   const mainEl=document.querySelector('main');
   const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const snapActive=()=>getComputedStyle(mainEl).scrollSnapType!=='none';
-  let target=null,glideId=null,glideT=null,lastWT=0,lastWD=0;
+  const slidesMode=()=>matchMedia('(min-width:861px)').matches;   // no telemóvel a página é corrida
+  let target=null,glideId=null,glideT=null;
   const curSlide=()=>Math.round(mainEl.scrollTop/mainEl.clientHeight);
   const baseIdx=()=>glideId!==null?target:curSlide();
   function glide(now){
@@ -945,28 +957,33 @@
     mainEl.style.scrollSnapType='none';   // o snap nativo lutaria contra a animação
     if(glideId===null)glideId=requestAnimationFrame(glide);
   }
-  mainEl.addEventListener('wheel',e=>{
-    if(!snapActive()&&glideId===null)return;
-    e.preventDefault();
-    const d=e.deltaY,now=performance.now();
-    if(Math.abs(d)<8)return;
-    // novo impulso: pausa desde o último, mudança de direção, ou força a crescer;
-    // a cauda de inércia do trackpad (deltas rápidos a decair) é ignorada
-    const impulse=(now-lastWT>60)||(Math.sign(d)!==Math.sign(lastWD))||(Math.abs(d)>Math.abs(lastWD)*1.5);
-    lastWT=now;lastWD=d;
-    if(impulse)slideTo(baseIdx()+(d>0?1:-1));
-  },{passive:false});
+  // o rato manda: qualquer wheel cancela uma animação em curso e o scroll segue nativo
+  const cancelGlide=()=>{if(glideId!==null){cancelAnimationFrame(glideId);glideId=null;glideT=null;mainEl.style.scrollSnapType=''}};
+  mainEl.addEventListener('wheel',()=>{cancelGlide();},{passive:true});
+  // reenquadre: 1s sem scroll → desliza para a secção mais próxima (se já não estiver nela)
+  let reframeT=null;
+  mainEl.addEventListener('scroll',()=>{
+    if(!slidesMode()||glideId!==null)return;
+    clearTimeout(reframeT);
+    reframeT=setTimeout(()=>{
+      if(glideId!==null||!slidesMode())return;
+      const pos=mainEl.scrollTop;
+      let best=0,bd=Infinity;
+      slides.forEach((s,i)=>{const d=Math.abs(s.offsetTop-pos);if(d<bd){bd=d;best=i}});
+      if(bd>2)slideTo(best);
+    },1000);
+  },{passive:true});
   links.forEach((l,i)=>l.addEventListener('click',e=>{
-    if(!snapActive()&&glideId===null)return;
+    if(!slidesMode())return;
     e.preventDefault();slideTo(i);
   }));
   arrow.addEventListener('click',e=>{
-    if(!snapActive()&&glideId===null)return;
+    if(!slidesMode())return;
     e.preventDefault();slideTo(baseIdx()+1);
   });
   // navegação por teclado
   document.addEventListener('keydown',e=>{
-    if(!snapActive()&&glideId===null)return;
+    if(!slidesMode())return;
     if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slideTo(baseIdx()+1)}
     if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slideTo(baseIdx()-1)}
   });
