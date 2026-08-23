@@ -153,6 +153,24 @@
   body.leaving #pageveil{opacity:1;pointer-events:auto;transition:opacity .36s ease}
   body.leaving #pageveil .pl{opacity:0}
   @media (prefers-reduced-motion:reduce){#pageveil,#pageveil .pl{transition-duration:.15s}#pageveil .plbar i{animation:none}}
+  /* animação de carregamento (Founder 2026-08-23): as peças do logo chegam em trajetórias
+     LINEARES de todos os lados com abrandamento exponencial no fim; a bolinha vermelha
+     pisca 3× e fica estática. Total: 1,75s. Feita em código com o logo real (vídeo gerado
+     deformaria as letras e pesaria no carregamento). */
+  #pageveil .plogo{position:relative;width:min(180px,50vw);aspect-ratio:2000/700}
+  #pageveil .plogo .seg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+    animation:segvem 1.1s cubic-bezier(.16,1,.3,1) both}
+  #pageveil .plogo .s1{clip-path:inset(0 86.55% 0 0);--tx:-60vw;--ty:0vh}
+  #pageveil .plogo .s2{clip-path:inset(0 73.1% 0 13.45%);--tx:0vw;--ty:-60vh;animation-delay:.05s}
+  #pageveil .plogo .s3{clip-path:inset(0 59.65% 0 26.9%);--tx:60vw;--ty:0vh;animation-delay:.1s}
+  #pageveil .plogo .s4{clip-path:inset(0 46.2% 0 40.35%);--tx:0vw;--ty:60vh;animation-delay:.15s}
+  #pageveil .plogo .s5{clip-path:inset(0 32.75% 0 53.8%);--tx:-45vw;--ty:-45vh;animation-delay:.2s}
+  #pageveil .plogo .s6{clip-path:inset(0 19.3% 0 67.25%);--tx:45vw;--ty:45vh;animation-delay:.25s}
+  #pageveil .plogo .s7{clip-path:inset(0 5.85% 0 80.7%);--tx:0vw;--ty:-60vh;animation-delay:.12s}
+  #pageveil .plogo .sdot{clip-path:inset(19% 0 63% 93.8%);animation:dotpisca .6s steps(1,end) 1.15s both}
+  @keyframes segvem{from{transform:translate(var(--tx),var(--ty))}to{transform:none}}
+  @keyframes dotpisca{0%{opacity:0}17%{opacity:1}34%{opacity:0}50%{opacity:1}67%{opacity:0}84%{opacity:1}100%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){#pageveil .plogo .seg{animation:none}}
   /* ---------- botão voltar ao início ---------- */
   a.homeback{position:fixed;top:2rem;left:2.4rem;z-index:80;display:inline-flex;align-items:center;gap:.45rem;
     padding:.44rem .8rem .44rem .62rem;border-radius:999px;text-decoration:none;
@@ -477,16 +495,53 @@
     /* no telemóvel a capa cresce com o conteúdo: o deco grande + botão têm de caber */
     section.slide.hero.capa{height:auto;min-height:46svh;max-height:none;padding:4.2rem 0 2.6rem}
     .capa .content{margin-top:1.2rem}
-    .capa .btn{margin-top:1.4rem;padding:.85rem 1.8rem}
+    .capa .btn,.capa .btnf{margin-top:1.4rem;padding:.85rem 1.8rem}
   }
-  /* botão de reunião na capa */
-  .capa .btn{margin-top:2rem}
+  /* botão de reunião na capa: mesmo efeito do "Entrar em contacto" da home
+     (linha vermelha a percorrer o contorno, Founder 2026-08-23) */
+  .capa .btnf{margin-top:2rem}
+  .btnf{position:relative;display:inline-block;color:#fff;text-decoration:none;
+    font-family:var(--sans);font-weight:400;font-size:.88rem;letter-spacing:.02em;
+    padding:.9rem 1.9rem;border:1px solid rgba(244,242,238,.45);border-radius:12px;
+    background:#101012;overflow:hidden;z-index:0;cursor:pointer;
+    transition:border-color .25s,box-shadow .3s}
+  .btnf::before{content:'';position:absolute;left:50%;top:50%;z-index:-2;
+    width:320%;padding-top:320%;transform:translate(-50%,-50%) rotate(0deg);
+    background:conic-gradient(from 0deg,transparent 0 72%,rgba(249,0,0,.25) 80%,var(--red-soft) 88%,#fff 91%,transparent 97%);
+    animation:sweep 3.2s linear infinite}
+  .btnf::after{content:'';position:absolute;inset:1.5px;z-index:-1;background:#101012;border-radius:10px}
+  @keyframes sweep{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .btnf:hover{border-color:rgba(244,242,238,.85);box-shadow:0 0 30px rgba(249,0,0,.3)}
+  /* o boneco entra a andar, com os objetos, até à posição final (arranca quando o véu levanta) */
+  .capa .decowrap{display:block;transform:translateX(-46vw)}
+  body.loaded .capa .decowrap{animation:decoanda 1.7s cubic-bezier(.16,1,.3,1) both}
+  body.loaded .capa .decowrap .deco{animation:decopassos 1.7s ease-in-out both}
+  @keyframes decoanda{from{transform:translateX(-46vw)}to{transform:none}}
+  @keyframes decopassos{0%{transform:translateY(0) rotate(0)}10%{transform:translateY(-7px) rotate(2.4deg)}20%{transform:translateY(0) rotate(0)}30%{transform:translateY(-6px) rotate(-2.2deg)}40%{transform:translateY(0) rotate(0)}52%{transform:translateY(-5px) rotate(1.8deg)}64%{transform:translateY(0) rotate(0)}76%{transform:translateY(-3px) rotate(-1.2deg)}88%{transform:translateY(-1px) rotate(.5deg)}100%{transform:translateY(0) rotate(0)}}
+  @media (prefers-reduced-motion:reduce){.capa .decowrap{transform:none}body.loaded .capa .decowrap,body.loaded .capa .decowrap .deco{animation:none}}
+  /* com o header visível, o número da secção e o "voltar" descem para não ficarem tapados */
+  section.slide .num,section.slide a.back{transition:top .35s ease}
+  body.desceu section.slide .num{top:calc(2.4rem + 46px)}
+  body.desceu section.slide a.back{top:calc(2.2rem + 46px)}
+  @media(max-width:860px){
+    body.desceu section.slide .num{top:calc(1.6rem + 46px)}
+    body.desceu section.slide a.back{top:calc(1.4rem + 46px)}
+  }
 </style>
 </head>
 <body>
 <div id="pageveil" aria-hidden="true">
   <div class="pl">
-    <img src="img/00-logo-branco.png" alt="">
+    <div class="plogo">
+      <img class="seg s1" src="img/00-logo-branco.png" alt="">
+      <img class="seg s2" src="img/00-logo-branco.png" alt="">
+      <img class="seg s3" src="img/00-logo-branco.png" alt="">
+      <img class="seg s4" src="img/00-logo-branco.png" alt="">
+      <img class="seg s5" src="img/00-logo-branco.png" alt="">
+      <img class="seg s6" src="img/00-logo-branco.png" alt="">
+      <img class="seg s7" src="img/00-logo-branco.png" alt="">
+      <img class="seg sdot" src="img/00-logo-branco.png" alt="">
+    </div>
     <div class="plbar"><i></i></div>
   </div>
 </div>
@@ -533,11 +588,11 @@
     <div class="veil"></div>
     <div class="content">
       <img class="logo" src="img/00-logo-branco.png" alt="AfteREC">
-      <img class="deco" src="img/00-deco.png" alt="">
+      <span class="decowrap"><img class="deco" src="img/00-deco.png" alt=""></span>
       <h1>Real Estate</h1>
       <div class="rule"></div>
       <p class="sub">Um serviço de produção audiovisual <span class="subq">para imobiliário de luxo.</span></p>
-      <a class="btn" href="https://cal.com/afterec/discoverycall" target="_blank" rel="noopener">Vamos conversar</a>
+      <a class="btnf" href="https://cal.com/afterec/discoverycall" target="_blank" rel="noopener">Vamos conversar</a>
     </div>
   </section>
 
