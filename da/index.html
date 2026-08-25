@@ -114,14 +114,77 @@
     display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .6s ease}
   #pageveil .pl{display:flex;flex-direction:column;align-items:center;gap:1.3rem;transition:opacity .35s ease}
   #pageveil .pl img{width:min(180px,50vw);height:auto}
-  #pageveil .plbar{width:140px;height:2px;background:rgba(244,242,238,.14);border-radius:2px;overflow:hidden}
-  #pageveil .plbar i{display:block;width:38%;height:100%;background:var(--red-soft);animation:plslide 1.1s ease-in-out infinite}
-  @keyframes plslide{0%{transform:translateX(-130%)}100%{transform:translateX(360%)}}
+  /* anel de loading: linha vermelha que circula À VOLTA da palavra, a encurtar e a
+     estender (Founder 2026-08-24); substitui a antiga barra por baixo do logo */
+  #pageveil .plwrap{position:relative;padding:1.15rem 1.5rem}
+  #pageveil .plring{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  #pageveil .plring rect{fill:none;stroke:var(--red-soft);stroke-width:1.5;stroke-linecap:round;
+    vector-effect:non-scaling-stroke;stroke-dasharray:11 89;
+    animation:ringroda 1.5s linear infinite,ringpulsa 3s ease-in-out infinite}
+  @keyframes ringroda{to{stroke-dashoffset:-100}}
+  @keyframes ringpulsa{0%,100%{stroke-dasharray:9 91}50%{stroke-dasharray:32 68}}
   body.loaded #pageveil{opacity:0;pointer-events:none}
   body.loaded #pageveil .pl{opacity:0}
   body.leaving #pageveil{opacity:1;pointer-events:auto;transition:opacity .36s ease}
   body.leaving #pageveil .pl{opacity:0}
-  @media (prefers-reduced-motion:reduce){#pageveil,#pageveil .pl{transition-duration:.15s}#pageveil .plbar i{animation:none}}
+  @media (prefers-reduced-motion:reduce){#pageveil,#pageveil .pl{transition-duration:.15s}#pageveil .plring rect{animation:none}}
+  /* animação de carregamento (Founder 2026-08-23): as peças do logo chegam em trajetórias
+     LINEARES de todos os lados com abrandamento exponencial no fim; a bolinha vermelha
+     pisca 3× e fica estática. Total: 1,75s. */
+  #pageveil .plogo{position:relative;width:min(180px,50vw);aspect-ratio:2000/700}
+  #pageveil .plogo .seg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+    animation:segvem .9s cubic-bezier(.16,1,.3,1) both}
+  /* as peças são as LINHAS que formam cada letra, cortadas nas JUNÇÕES reais
+     (Founder 2026-08-24): o A são 3 linhas (perna esquerda, perna direita, junção ao
+     centro), as curvas são UMA linha inteira (bojo do R, C completo). Cada linha entra
+     invisível e ganha opacidade exponencial antes de chegar à posição final. */
+  #pageveil .plogo .p1{clip-path:polygon(6.2% 38%,8.7% 38%,3.9% 79.8%,0.5% 79.8%);--tx:-55vw;--ty:0vh}
+  #pageveil .plogo .p2{clip-path:polygon(6.3% 38%,8.8% 38%,14.6% 79.8%,11.2% 79.8%);--tx:0vw;--ty:-55vh;animation-delay:.04s}
+  #pageveil .plogo .p3{clip-path:inset(67.3% 89.1% 26.8% 4.4%);--tx:0vw;--ty:55vh;animation-delay:.08s}
+  #pageveil .plogo .p4{clip-path:inset(38.7% 81.6% 20.7% 15.8%);--tx:0vw;--ty:55vh;animation-delay:.13s}
+  #pageveil .plogo .p5{clip-path:inset(38.7% 75.5% 54.3% 18.1%);--tx:55vw;--ty:0vh;animation-delay:.16s}
+  #pageveil .plogo .p6{clip-path:inset(55.6% 75.5% 37.4% 18.1%);--tx:-55vw;--ty:0vh;animation-delay:.19s}
+  #pageveil .plogo .p7{clip-path:inset(38.8% 64.9% 54.1% 24.8%);--tx:0vw;--ty:-55vh;animation-delay:.24s}
+  #pageveil .plogo .p8{clip-path:inset(45.6% 68.6% 20.7% 28.5%);--tx:0vw;--ty:55vh;animation-delay:.27s}
+  #pageveil .plogo .p9{clip-path:inset(38.8% 60.7% 20.7% 36.4%);--tx:-55vw;--ty:0vh;animation-delay:.33s}
+  #pageveil .plogo .p10{clip-path:inset(38.8% 54.6% 54.1% 39%);--tx:0vw;--ty:-55vh;animation-delay:.36s}
+  #pageveil .plogo .p11{clip-path:inset(55.1% 54.6% 37.8% 39%);--tx:55vw;--ty:0vh;animation-delay:.39s}
+  #pageveil .plogo .p12{clip-path:inset(72.3% 54.6% 20.7% 39%);--tx:0vw;--ty:55vh;animation-delay:.42s}
+  #pageveil .plogo .p13{clip-path:inset(28% 49.1% 20.7% 47.5%);--tx:0vw;--ty:55vh;animation-delay:.46s}
+  #pageveil .plogo .p14{clip-path:inset(28% 38.7% 40.1% 50.6%);--tx:45vw;--ty:-30vh;animation-delay:.49s}
+  #pageveil .plogo .p15{clip-path:inset(59.6% 38.7% 20.7% 50.6%);--tx:30vw;--ty:45vh;animation-delay:.52s}
+  #pageveil .plogo .p16{clip-path:inset(28% 33.7% 20.7% 62.8%);--tx:0vw;--ty:-55vh;animation-delay:.56s}
+  #pageveil .plogo .p17{clip-path:inset(28% 26% 63.3% 66%);--tx:55vw;--ty:0vh;animation-delay:.59s}
+  #pageveil .plogo .p18{clip-path:inset(48.7% 26% 42.6% 66%);--tx:-45vw;--ty:0vh;animation-delay:.62s}
+  #pageveil .plogo .p19{clip-path:inset(70.6% 26% 20.7% 66%);--tx:0vw;--ty:55vh;animation-delay:.65s}
+  #pageveil .plogo .p20{clip-path:inset(27% 8.4% 19.8% 75.7%);--tx:40vw;--ty:-40vh;animation-delay:.69s}
+  #pageveil .plogo .sdot{clip-path:inset(19% 0 63% 92.7%);animation:dotpisca .5s steps(1,end) 1.62s both}
+  @keyframes segvem{0%{transform:translate(var(--tx),var(--ty));opacity:0}35%{opacity:.18}60%{opacity:.5}85%{opacity:1}100%{transform:none;opacity:1}}
+  @keyframes dotpisca{0%{opacity:0}17%{opacity:1}34%{opacity:0}50%{opacity:1}67%{opacity:0}84%{opacity:1}100%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){#pageveil .plogo .seg{animation:none}}
+  /* boneco do loading (Founder 2026-08-25): fica em LOOP e atravessa o véu de um lado ao
+     outro, virando-se na ponta para andar sempre de frente. O logo já não desaparece
+     quando o vídeo entra: os dois vivem juntos, o logo em cima e o boneco por baixo.
+     A altura (e não a largura) é que manda no tamanho, para as figuras dos 4 serviços
+     ficarem à mesma escala apesar de os clips terem formatos diferentes. */
+  #pageveil .plboneco{display:block;height:clamp(120px,20vh,200px);width:auto;max-width:92vw;
+    object-fit:contain;mix-blend-mode:screen;filter:contrast(1.45) brightness(.94);
+    pointer-events:none;animation:bonvaivem 9s ease-in-out infinite}
+  @keyframes bonvaivem{
+    0%{transform:translateX(-30vw) scaleX(1)}
+    46%{transform:translateX(30vw) scaleX(1)}
+    50%{transform:translateX(30vw) scaleX(-1)}
+    96%{transform:translateX(-30vw) scaleX(-1)}
+    100%{transform:translateX(-30vw) scaleX(1)}}
+  /* Film: começa do outro lado e faz o percurso ao contrário (Founder 2026-08-25) */
+  body.veil-inverso #pageveil .plboneco{animation-name:bonvaieminv}
+  @keyframes bonvaieminv{
+    0%{transform:translateX(30vw) scaleX(-1)}
+    46%{transform:translateX(-30vw) scaleX(-1)}
+    50%{transform:translateX(-30vw) scaleX(1)}
+    96%{transform:translateX(30vw) scaleX(1)}
+    100%{transform:translateX(30vw) scaleX(-1)}}
+  @media (prefers-reduced-motion:reduce){#pageveil .plboneco{animation:none}}
   /* ---------- botão voltar ao início ---------- */
   a.homeback{position:fixed;top:2rem;left:2.4rem;z-index:80;display:inline-flex;align-items:center;gap:.45rem;
     padding:.44rem .8rem .44rem .62rem;border-radius:999px;text-decoration:none;
@@ -417,8 +480,13 @@
 <body>
 <div id="pageveil" aria-hidden="true">
   <div class="pl">
-    <img src="/real-estate/img/00-logo-branco.png" alt="">
-    <div class="plbar"><i></i></div>
+    <div class="plwrap">
+    <svg class="plring" viewBox="0 0 232 96" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="228" height="92" rx="12" pathLength="100"/></svg>
+    <div class="plogo">
+      <img class="seg p1" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p2" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p3" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p4" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p5" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p6" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p7" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p8" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p9" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p10" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p11" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p12" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p13" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p14" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p15" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p16" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p17" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p18" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p19" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg p20" src="/real-estate/img/00-logo-branco.png" alt=""><img class="seg sdot" src="/real-estate/img/00-logo-branco.png" alt="">
+    </div>
+    </div>
+    <video class="plboneco" src="/real-estate/video/00-deco.mp4" muted loop playsinline preload="auto"></video>
   </div>
 </div>
 <div class="topctl">
@@ -601,7 +669,7 @@
     <a class="back" href="#s5">← Alt indhold</a>
     <div class="media" style="background-image:url('/real-estate/img/07b-tour.jpg');background-size:cover;background-position:center">
       <!-- Vídeo-tour em loop, sem som nem ligação externa -->
-      <video class="bgvideo" autoplay muted loop playsinline poster="/real-estate/img/07b-tour.jpg">
+      <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="/real-estate/img/07b-tour.jpg">
         <source src="/real-estate/video/07b-tour.mp4" type="video/mp4">
       </video>
       <div class="grad"></div>
@@ -626,20 +694,20 @@
       <div class="media4">
         <div class="m big" style="background-image:url('/real-estate/img/08-reel.jpg')">
           <!-- Vídeo FPV em loop, sem som nem ligação externa -->
-          <video class="bgvideo" autoplay muted loop playsinline poster="/real-estate/img/08-reel.jpg">
+          <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="/real-estate/img/08-reel.jpg">
             <source src="/real-estate/video/08-fpv.mp4" type="video/mp4">
           </video>
         </div>
         <div class="m" style="background-image:url('/real-estate/img/08-drone.jpg')"></div>
         <div class="m" style="background-image:url('/real-estate/img/08-tl-real.jpg')">
           <!-- Time-lapse de obra real (The Park Residence) -->
-          <video class="bgvideo" autoplay muted loop playsinline poster="/real-estate/img/08-tl-real.jpg">
+          <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="/real-estate/img/08-tl-real.jpg">
             <source src="/real-estate/video/08-tl-real.mp4" type="video/mp4">
           </video>
         </div>
         <div class="m" style="background-image:url('/real-estate/img/08-tl-ia.jpg')">
           <!-- Time-lapse de obra melhorado com IA (The Park Residence) -->
-          <video class="bgvideo" autoplay muted loop playsinline poster="/real-estate/img/08-tl-ia.jpg">
+          <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="/real-estate/img/08-tl-ia.jpg">
             <source src="/real-estate/video/08-tl-ia.mp4" type="video/mp4">
           </video>
         </div>
@@ -661,7 +729,7 @@
       <div class="media3">
         <div class="m big">
           <!-- Vídeo 3D em loop, sem som nem ligação externa -->
-          <video class="bgvideo" autoplay muted loop playsinline poster="/real-estate/img/09-3d.jpg">
+          <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="/real-estate/img/09-3d.jpg">
             <source src="/real-estate/video/09-3d.mp4" type="video/mp4">
           </video>
         </div>
@@ -904,10 +972,37 @@
   });
 </script>
 <script>
-  window.addEventListener('pageshow', function(){ document.body.classList.remove('leaving'); document.body.classList.add('loaded'); });
-  function enterSite(){ document.body.classList.add('loaded'); }
+  window.addEventListener('pageshow', function(e){ document.body.classList.remove('leaving'); if(e.persisted) document.body.classList.add('loaded'); });
+  // ecrã de carregamento: as peças do logo montam-se e o boneco anda em loop
+  // por baixo, a atravessar o véu. O véu levanta quando a página acaba de carregar
+  // (com um mínimo de 2,25s, o tempo da animação do logo), nunca à espera de o clip
+  // terminar — com o vídeo em loop isso não chegava a acontecer e o loading ficava preso
+  // (Founder 2026-08-25).
+  var bonV = document.querySelector('#pageveil .plboneco');
+  if(bonV && !matchMedia('(prefers-reduced-motion:reduce)').matches){
+    var pvV = bonV.play();
+    if(pvV && pvV.catch) pvV.catch(function(){ bonV.remove(); });
+  } else if(bonV){ bonV.remove(); }
+  function enterSite(){ setTimeout(function(){ document.body.classList.add('loaded'); }, Math.max(0, 2250 - performance.now())); }
   if(document.readyState === 'complete'){ enterSite(); } else { window.addEventListener('load', enterSite); }
-  setTimeout(enterSite, 8000);
+  setTimeout(enterSite, 8000);   // falha-segura: o véu nunca fica preso
+  // vídeos das secções: com preload="none" nada se descarrega à entrada; cada um começa
+  // quando a sua secção chega ao ecrã e pára quando sai. Antes vinham todos com autoplay,
+  // o que punha o browser a puxar dezenas de MB de uma vez e atrasava a página inteira,
+  // incluindo o levantar do véu, que espera pelo load (Founder 2026-08-25).
+  (function(){
+    var lz = document.querySelectorAll('video[data-lazy]');
+    if(!lz.length) return;
+    var tocar = function(v){ var p = v.play(); if(p && p.catch) p.catch(function(){}); };
+    if(!('IntersectionObserver' in window)){ lz.forEach(tocar); return; }
+    var vo = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting) tocar(e.target);
+        else if(!e.target.paused) e.target.pause();
+      });
+    }, { rootMargin: '250px 0px', threshold: 0.01 });
+    lz.forEach(function(v){ vo.observe(v); });
+  })();
   function leaveTo(href){ document.body.classList.add('leaving'); setTimeout(function(){ window.location.href = href; }, 340); }
   var hb = document.querySelector('a.homeback');
   if(hb) hb.addEventListener('click', function(ev){ ev.preventDefault(); leaveTo(hb.getAttribute('href')); });

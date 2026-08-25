@@ -161,8 +161,7 @@
   @media (prefers-reduced-motion:reduce){#pageveil,#pageveil .pl{transition-duration:.15s}#pageveil .plring rect{animation:none}}
   /* animação de carregamento (Founder 2026-08-23): as peças do logo chegam em trajetórias
      LINEARES de todos os lados com abrandamento exponencial no fim; a bolinha vermelha
-     pisca 3× e fica estática. Total: 1,75s. Feita em código com o logo real (vídeo gerado
-     deformaria as letras e pesaria no carregamento). */
+     pisca 3× e fica estática. Total: 1,75s. */
   #pageveil .plogo{position:relative;width:min(180px,50vw);aspect-ratio:2000/700}
   #pageveil .plogo .seg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
     animation:segvem .9s cubic-bezier(.16,1,.3,1) both}
@@ -194,13 +193,29 @@
   @keyframes segvem{0%{transform:translate(var(--tx),var(--ty));opacity:0}35%{opacity:.18}60%{opacity:.5}85%{opacity:1}100%{transform:none;opacity:1}}
   @keyframes dotpisca{0%{opacity:0}17%{opacity:1}34%{opacity:0}50%{opacity:1}67%{opacity:0}84%{opacity:1}100%{opacity:1}}
   @media (prefers-reduced-motion:reduce){#pageveil .plogo .seg{animation:none}}
-  /* loading entre serviços (Founder 2026-08-24): ao entrar num serviço, o véu mostra os
-     bonecos a ANDAR (clip gerado, fundo preto apagado pelo blend); a animação do logo
-     fica como carregamento do home e como recurso se o vídeo não tocar */
-  #pageveil .plboneco{display:none;width:min(430px,74vw);height:auto;
-    mix-blend-mode:screen;filter:contrast(1.45) brightness(.94);pointer-events:none}
-  body.veil-boneco #pageveil .plwrap{display:none}
-  body.veil-boneco #pageveil .plboneco{display:block}
+  /* boneco do loading (Founder 2026-08-25): fica em LOOP e atravessa o véu de um lado ao
+     outro, virando-se na ponta para andar sempre de frente. O logo já não desaparece
+     quando o vídeo entra: os dois vivem juntos, o logo em cima e o boneco por baixo.
+     A altura (e não a largura) é que manda no tamanho, para as figuras dos 4 serviços
+     ficarem à mesma escala apesar de os clips terem formatos diferentes. */
+  #pageveil .plboneco{display:block;height:clamp(120px,20vh,200px);width:auto;max-width:92vw;
+    object-fit:contain;mix-blend-mode:screen;filter:contrast(1.45) brightness(.94);
+    pointer-events:none;animation:bonvaivem 9s ease-in-out infinite}
+  @keyframes bonvaivem{
+    0%{transform:translateX(-30vw) scaleX(1)}
+    46%{transform:translateX(30vw) scaleX(1)}
+    50%{transform:translateX(30vw) scaleX(-1)}
+    96%{transform:translateX(-30vw) scaleX(-1)}
+    100%{transform:translateX(-30vw) scaleX(1)}}
+  /* Film: começa do outro lado e faz o percurso ao contrário (Founder 2026-08-25) */
+  body.veil-inverso #pageveil .plboneco{animation-name:bonvaieminv}
+  @keyframes bonvaieminv{
+    0%{transform:translateX(30vw) scaleX(-1)}
+    46%{transform:translateX(-30vw) scaleX(-1)}
+    50%{transform:translateX(-30vw) scaleX(1)}
+    96%{transform:translateX(30vw) scaleX(1)}
+    100%{transform:translateX(30vw) scaleX(-1)}}
+  @media (prefers-reduced-motion:reduce){#pageveil .plboneco{animation:none}}
   /* ---------- botão voltar ao início ---------- */
   a.homeback{position:fixed;top:2rem;left:2.4rem;z-index:80;display:inline-flex;align-items:center;gap:.45rem;
     padding:.44rem .8rem .44rem .62rem;border-radius:999px;text-decoration:none;
@@ -568,7 +583,7 @@
       <img class="seg p1" src="img/00-logo-branco.png" alt=""><img class="seg p2" src="img/00-logo-branco.png" alt=""><img class="seg p3" src="img/00-logo-branco.png" alt=""><img class="seg p4" src="img/00-logo-branco.png" alt=""><img class="seg p5" src="img/00-logo-branco.png" alt=""><img class="seg p6" src="img/00-logo-branco.png" alt=""><img class="seg p7" src="img/00-logo-branco.png" alt=""><img class="seg p8" src="img/00-logo-branco.png" alt=""><img class="seg p9" src="img/00-logo-branco.png" alt=""><img class="seg p10" src="img/00-logo-branco.png" alt=""><img class="seg p11" src="img/00-logo-branco.png" alt=""><img class="seg p12" src="img/00-logo-branco.png" alt=""><img class="seg p13" src="img/00-logo-branco.png" alt=""><img class="seg p14" src="img/00-logo-branco.png" alt=""><img class="seg p15" src="img/00-logo-branco.png" alt=""><img class="seg p16" src="img/00-logo-branco.png" alt=""><img class="seg p17" src="img/00-logo-branco.png" alt=""><img class="seg p18" src="img/00-logo-branco.png" alt=""><img class="seg p19" src="img/00-logo-branco.png" alt=""><img class="seg p20" src="img/00-logo-branco.png" alt=""><img class="seg sdot" src="img/00-logo-branco.png" alt="">
     </div>
     </div>
-    <video class="plboneco" src="video/00-deco.mp4" muted playsinline preload="auto"></video>
+    <video class="plboneco" src="video/00-deco.mp4" muted loop playsinline preload="auto"></video>
   </div>
 </div>
 <header class="svchead" id="svchead">
@@ -768,7 +783,7 @@
     </div>
     <div class="media" style="background-image:url('img/07-cinema.jpg');background-size:cover;background-position:center">
       <!-- Vídeo em loop, sem ligação externa: colocar o ficheiro em video/07-cinema.mp4 -->
-      <video class="bgvideo" autoplay muted loop playsinline poster="img/07-cinema.jpg">
+      <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="img/07-cinema.jpg">
         <source src="video/07-cinema.mp4" type="video/mp4">
       </video>
       <div class="grad"></div>
@@ -781,7 +796,7 @@
     <a class="back" href="#s5">← Todos os conteúdos</a>
     <div class="media" style="background-image:url('img/07b-tour.jpg');background-size:cover;background-position:center">
       <!-- Vídeo-tour em loop, sem som nem ligação externa -->
-      <video class="bgvideo" autoplay muted loop playsinline poster="img/07b-tour.jpg">
+      <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="img/07b-tour.jpg">
         <source src="video/07b-tour.mp4" type="video/mp4">
       </video>
       <div class="grad"></div>
@@ -818,20 +833,20 @@
       <div class="media4">
         <div class="m big" style="background-image:url('img/08-reel.jpg')">
           <!-- Vídeo FPV em loop, sem som nem ligação externa -->
-          <video class="bgvideo" autoplay muted loop playsinline poster="img/08-reel.jpg">
+          <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="img/08-reel.jpg">
             <source src="video/08-fpv.mp4" type="video/mp4">
           </video>
         </div>
         <div class="m" style="background-image:url('img/08-drone.jpg')"></div>
         <div class="m" style="background-image:url('img/08-tl-real.jpg')">
           <!-- Time-lapse de obra real (The Park Residence) -->
-          <video class="bgvideo" autoplay muted loop playsinline poster="img/08-tl-real.jpg">
+          <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="img/08-tl-real.jpg">
             <source src="video/08-tl-real.mp4" type="video/mp4">
           </video>
         </div>
         <div class="m" style="background-image:url('img/08-tl-ia.jpg')">
           <!-- Time-lapse de obra melhorado com IA (The Park Residence) -->
-          <video class="bgvideo" autoplay muted loop playsinline poster="img/08-tl-ia.jpg">
+          <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="img/08-tl-ia.jpg">
             <source src="video/08-tl-ia.mp4" type="video/mp4">
           </video>
         </div>
@@ -858,7 +873,7 @@
       <div class="media3">
         <div class="m big">
           <!-- Vídeo 3D em loop, sem som nem ligação externa -->
-          <video class="bgvideo" autoplay muted loop playsinline poster="img/09-3d.jpg">
+          <video class="bgvideo" data-lazy preload="none" muted loop playsinline poster="img/09-3d.jpg">
             <source src="video/09-3d.mp4" type="video/mp4">
           </video>
         </div>
@@ -1124,24 +1139,36 @@
   // loading entre serviços: o véu mostra os bonecos a andar (clip); se o vídeo não
   // tocar, fica a animação do logo (~2,1s). O véu só levanta quando a animação em
   // curso termina; ao voltar por bfcache (e.persisted) levanta logo, sem repetição
-  var t0v = performance.now(), veuCarregou = false, bonecoAtivo = false, bonecoAcabou = false;
-  var bon = document.querySelector('#pageveil .plboneco');
-  if(bon && !matchMedia('(prefers-reduced-motion:reduce)').matches){
-    bon.addEventListener('ended', function(){ bonecoAcabou = true; tentaEntrar(); });
-    var pv = bon.play();
-    if(pv && pv.then) pv.then(function(){ bonecoAtivo = true; document.body.classList.add('veil-boneco'); })
-      .catch(function(){ bon.remove(); bon = null; });
-  } else if(bon){ bon.remove(); bon = null; }
-  function tentaEntrar(){
-    if(!veuCarregou) return;
-    if(bonecoAtivo && !bonecoAcabou) return;               // espera o fim do clip
-    var falta = bonecoAtivo ? 160 : Math.max(0, 2250 - (performance.now() - t0v));
-    setTimeout(function(){ document.body.classList.add('loaded'); }, falta);
-  }
-  function enterSite(){ veuCarregou = true; tentaEntrar(); }
-  window.addEventListener('pageshow', function(e){ document.body.classList.remove('leaving'); if(e.persisted) document.body.classList.add('loaded'); });
+  // ecrã de carregamento: as peças do logo montam-se e o boneco anda em loop
+  // por baixo, a atravessar o véu. O véu levanta quando a página acaba de carregar
+  // (com um mínimo de 2,25s, o tempo da animação do logo), nunca à espera de o clip
+  // terminar — com o vídeo em loop isso não chegava a acontecer e o loading ficava preso
+  // (Founder 2026-08-25).
+  var bonV = document.querySelector('#pageveil .plboneco');
+  if(bonV && !matchMedia('(prefers-reduced-motion:reduce)').matches){
+    var pvV = bonV.play();
+    if(pvV && pvV.catch) pvV.catch(function(){ bonV.remove(); });
+  } else if(bonV){ bonV.remove(); }
+  function enterSite(){ setTimeout(function(){ document.body.classList.add('loaded'); }, Math.max(0, 2250 - performance.now())); }
   if(document.readyState === 'complete'){ enterSite(); } else { window.addEventListener('load', enterSite); }
-  setTimeout(function(){ document.body.classList.add('loaded'); }, 8000);
+  setTimeout(enterSite, 8000);   // falha-segura: o véu nunca fica preso
+  // vídeos das secções: com preload="none" nada se descarrega à entrada; cada um começa
+  // quando a sua secção chega ao ecrã e pára quando sai. Antes vinham todos com autoplay,
+  // o que punha o browser a puxar dezenas de MB de uma vez e atrasava a página inteira,
+  // incluindo o levantar do véu, que espera pelo load (Founder 2026-08-25).
+  (function(){
+    var lz = document.querySelectorAll('video[data-lazy]');
+    if(!lz.length) return;
+    var tocar = function(v){ var p = v.play(); if(p && p.catch) p.catch(function(){}); };
+    if(!('IntersectionObserver' in window)){ lz.forEach(tocar); return; }
+    var vo = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting) tocar(e.target);
+        else if(!e.target.paused) e.target.pause();
+      });
+    }, { rootMargin: '250px 0px', threshold: 0.01 });
+    lz.forEach(function(v){ vo.observe(v); });
+  })();
   function leaveTo(href){ document.body.classList.add('leaving'); setTimeout(function(){ window.location.href = href; }, 340); }
   var hb = document.querySelector('a.homeback');
   if(hb) hb.addEventListener('click', function(ev){ ev.preventDefault(); leaveTo(hb.getAttribute('href')); });
